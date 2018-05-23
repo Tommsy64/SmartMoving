@@ -1,4 +1,3 @@
-// For those who want the bleeding edge
 buildscript {
     repositories {
         jcenter()
@@ -68,14 +67,12 @@ processResources {
         expand 'version': project.simpleVersion, 'mcversion': config.minecraft.version
     }
     from(sourceSets.main.resources.srcDirs) {
-        include 'application.conf'
         filter { line ->
             line.replaceAll("@VERSION@", project.simpleVersion)
         }
     }
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-        exclude 'application.conf'
     }
 }
 

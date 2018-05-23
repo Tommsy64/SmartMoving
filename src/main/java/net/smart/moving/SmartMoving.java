@@ -131,8 +131,8 @@ public abstract class SmartMoving extends SmartMovingBase
 				double posX = sp.posX + getSpawnOffset();
 				double posZ = sp.posZ + getSpawnOffset();
 				Particle splash = isLava ?
-						new ParticleSplash.Factory().getEntityFX(EnumParticleTypes.LAVA.getParticleID(), sp.worldObj, posX, posY, posZ, 0, 0.2, 0) :
-						new ParticleSplash.Factory().getEntityFX(EnumParticleTypes.WATER_SPLASH.getParticleID(), sp.worldObj, posX, posY, posZ, 0, 0.2, 0);
+						new ParticleSplash.Factory().createParticle(EnumParticleTypes.LAVA.getParticleID(), sp.worldObj, posX, posY, posZ, 0, 0.2, 0) :
+						new ParticleSplash.Factory().createParticle(EnumParticleTypes.WATER_SPLASH.getParticleID(), sp.worldObj, posX, posY, posZ, 0, 0.2, 0);
 				minecraft.effectRenderer.addEffect(splash);
 
 				spawnSwimmingParticle -= maxSpawnSwimmingParticle;
