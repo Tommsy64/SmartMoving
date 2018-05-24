@@ -40,7 +40,7 @@ public class SmartMovingSelf extends net.smart.moving.SmartMovingSelf
 		return SmartMovingOptions.hasSinglePlayerCommands && isSPCFlying(esp) || super.doFlyingAnimation();
 	}
 
-	public static boolean isSPCFlying(EntityPlayerSP entityPlayer)
+	private static boolean isSPCFlying(EntityPlayerSP entityPlayer)
 	{
 		if(!SmartMovingOptions.hasSinglePlayerCommands)
 			return false;

@@ -658,7 +658,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			else
 				horizontalDamping = HorizontalGroundDamping;
 
-			if(esp.movementInput.jump && isFast && Config.isJumpingEnabled(Config.Sprinting, Config.Up))
+			if(esp.movementInput.jump && isFast && Config.isJumpingEnabled(SmartMovingClientConfig.Sprinting, SmartMovingClientConfig.Up))
 				speedFactor *= Config._sprintJumpVerticalFactor.value;
 		}
 		else
@@ -982,7 +982,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 							else if(handsClimbing == HandsClimbing.TopHold || feetClimbing == FeetClimbing.BaseHold || (feetClimbing == FeetClimbing.SlowUpWithHoldWithoutHands && handsClimbing == HandsClimbing.None))
 							{
 								// holding at top
-								if (!jumpButton.StartPressed || !(isClimbJumping = tryJump(feetClimbing != FeetClimbing.None ? Config.ClimbUp : Config.ClimbUpHandsOnly, null, null, null)))
+								if (!jumpButton.StartPressed || !(isClimbJumping = tryJump(feetClimbing != FeetClimbing.None ? SmartMovingClientConfig.ClimbUp : SmartMovingClientConfig.ClimbUpHandsOnly, null, null, null)))
 								{
 									if(handsClimbing == HandsClimbing.Sink && feetClimbing == FeetClimbing.BaseHold || handsClimbing == HandsClimbing.TopHold && feetClimbing == FeetClimbing.TopWithHands)
 										setShouldClimbSpeed(HoldMotion, HandsClimbing.MiddleGrab, FeetClimbing.DownStep);
@@ -1033,8 +1033,8 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 									boolean handsOnly = feetClimbing != FeetClimbing.None;
 
 									int type = (Options._climbJumpBackHeadOnGrab.value ? grabButton.Pressed : !grabButton.Pressed)
-										? (handsOnly ? Config.ClimbBackHead : Config.ClimbBackHeadHandsOnly)
-										: (handsOnly ? Config.ClimbBackUp : Config.ClimbBackUpHandsOnly);
+										? (handsOnly ? SmartMovingClientConfig.ClimbBackHead : SmartMovingClientConfig.ClimbBackHeadHandsOnly)
+										: (handsOnly ? SmartMovingClientConfig.ClimbBackUp : SmartMovingClientConfig.ClimbBackUpHandsOnly);
 
 									float jumpAngle = sp.rotationYaw + 180F;
 									if(tryJump(type, null, null, jumpAngle))
@@ -1823,7 +1823,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 				else
 				{
 					if(jumpCharge > 0)
-						tryJump(Config.ChargeUp, null, null, null);
+						tryJump(SmartMovingClientConfig.ChargeUp, null, null, null);
 					jumpCharge = 0;
 				}
 			else
@@ -1844,7 +1844,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 				else
 				{
 					if(headJumpCharge > 0 && sp.onGround)
-						tryJump(Config.HeadUp, null, null, null);
+						tryJump(SmartMovingClientConfig.HeadUp, null, null, null);
 					headJumpCharge = 0;
 				}
 			else
@@ -1861,7 +1861,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 				sp.motionY -= 0.039999999105930328D;
 				if(!isStillSwimmingJump && sp.onGround && jumpCharge == 0)
 				{
-					if(tryJump(Config.Up, true, null, null))
+					if(tryJump(SmartMovingClientConfig.Up, true, null, null))
 					{
 						Random rand = sp.getRNG();
 						playSound("random.splash", 0.05F, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
@@ -1870,7 +1870,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			}
 
 		if(jump && !blockJumpTillButtonRelease && !isJumpCharging && !isHeadJumpCharging && !isVineAnyClimbing)
-			tryJump(Config.Up, false, null, null);
+			tryJump(SmartMovingClientConfig.Up, false, null, null);
 
 		int left = 0;
 		int back = 0;
@@ -1891,7 +1891,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			else
 				angle = 180;
 
-			if(tryJump(Config.Angle, null, null, sp.rotationYaw + angle))
+			if(tryJump(SmartMovingClientConfig.Angle, null, null, sp.rotationYaw + angle))
 				angleJumpType = ((360 - angle) / 45) % 8;
 
 			leftJumpCount = 0;
@@ -1910,13 +1910,13 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		{
 			if(sp.fallDistance > Config._wallHeadJumpFallMaximumDistance.value)
 				return;
-			jumpType = wasCollidedHorizontally ? Config.WallHeadSlide : Config.WallHead;
+			jumpType = wasCollidedHorizontally ? SmartMovingClientConfig.WallHeadSlide : SmartMovingClientConfig.WallHead;
 		}
 		else
 		{
 			if(sp.fallDistance > Config._wallUpJumpFallMaximumDistance.value)
 				return;
-			jumpType = wasCollidedHorizontally ? Config.WallUpSlide : Config.WallUp;
+			jumpType = wasCollidedHorizontally ? SmartMovingClientConfig.WallUpSlide : SmartMovingClientConfig.WallUp;
 		}
 
 		float jumpAngle;
@@ -1956,17 +1956,17 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 	public boolean tryJump(int type, Boolean inWaterOrNull, Boolean isRunningOrNull, Float angle)
 	{
 		boolean noVertical = false;
-		if(type == Config.WallUpSlide || type == Config.WallHeadSlide)
+		if(type == SmartMovingClientConfig.WallUpSlide || type == SmartMovingClientConfig.WallHeadSlide)
 		{
-			type = type == Config.WallUpSlide ? Config.WallUp : Config.WallHead;
+			type = type == SmartMovingClientConfig.WallUpSlide ? SmartMovingClientConfig.WallUp : SmartMovingClientConfig.WallHead;
 			noVertical = true;
 		}
 
 		boolean inWater = inWaterOrNull != null ? inWaterOrNull : isDipping;
 		boolean isRunning = isRunningOrNull != null ? isRunningOrNull : isRunning();
-		boolean charged = type == Config.ChargeUp;
-		boolean up = type == Config.Up || type == Config.ChargeUp || type == Config.HeadUp || type == Config.ClimbUp || type == Config.ClimbUpHandsOnly || type == Config.ClimbBackUp || type == Config.ClimbBackUpHandsOnly || type == Config.ClimbBackHead || type == Config.ClimbBackHeadHandsOnly || type == Config.Angle || type == Config.WallUp || type == Config.WallHead;
-		boolean head = type == Config.HeadUp || type == Config.ClimbBackHead || type == Config.ClimbBackHeadHandsOnly || type == Config.WallHead;
+		boolean charged = type == SmartMovingClientConfig.ChargeUp;
+		boolean up = type == SmartMovingClientConfig.Up || type == SmartMovingClientConfig.ChargeUp || type == SmartMovingClientConfig.HeadUp || type == SmartMovingClientConfig.ClimbUp || type == SmartMovingClientConfig.ClimbUpHandsOnly || type == SmartMovingClientConfig.ClimbBackUp || type == SmartMovingClientConfig.ClimbBackUpHandsOnly || type == SmartMovingClientConfig.ClimbBackHead || type == SmartMovingClientConfig.ClimbBackHeadHandsOnly || type == SmartMovingClientConfig.Angle || type == SmartMovingClientConfig.WallUp || type == SmartMovingClientConfig.WallHead;
+		boolean head = type == SmartMovingClientConfig.HeadUp || type == SmartMovingClientConfig.ClimbBackHead || type == SmartMovingClientConfig.ClimbBackHeadHandsOnly || type == SmartMovingClientConfig.WallHead;
 
 		int speed = getJumpSpeed(isStanding, isSlow, isRunning, isFast, angle);
 		boolean enabled = Config.isJumpingEnabled(speed, type);
@@ -2026,7 +2026,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			if(angle != null)
 			{
 				float jumpAngle = angle / RadiantToAngle;
-				boolean reset = type == Config.WallUp || type == Config.WallHead;
+				boolean reset = type == SmartMovingClientConfig.WallUp || type == SmartMovingClientConfig.WallHead;
 
 				double horizontal = Math.max(horizontalMotion, horizontalJumpFactor);
 				double moveX = -Math.sin(jumpAngle);
@@ -2095,15 +2095,15 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		isRunning &= angle == null;
 
 		if(isSprinting)
-			return Config.Sprinting;
+			return SmartMovingClientConfig.Sprinting;
 		else if(isRunning)
-			return Config.Running;
+			return SmartMovingClientConfig.Running;
 		else if(isSlow)
-			return Config.Sneaking;
+			return SmartMovingClientConfig.Sneaking;
 		else if(isStanding)
-			return Config.Standing;
+			return SmartMovingClientConfig.Standing;
 		else
-			return Config.Walking;
+			return SmartMovingClientConfig.Walking;
 	}
 
 	private void standupIfPossible()
@@ -2343,7 +2343,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			contextContinueCrawl = false;
 
 		if (wasCrawling && !isCrawling && esp.capabilities.isFlying)
-			tryJump(Config.Up, null, null, null);
+			tryJump(SmartMovingClientConfig.Up, null, null, null);
 
 		wantCrawlNotClimb =
 			(
@@ -2451,7 +2451,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		{
 			setHeightOffset(-1);
 			move(0, (-1D), 0, true);
-			tryJump(Config.SlideDown, false, wasRunning, null);
+			tryJump(SmartMovingClientConfig.SlideDown, false, wasRunning, null);
 			isSliding = true;
 			isHeadJumping = false;
 			isAerodynamic = false;

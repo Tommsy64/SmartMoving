@@ -17,8 +17,6 @@
 
 package net.smart.moving;
 
-import java.io.*;
-
 public class HandsClimbing
 {
 	public static final int MiddleGrab = 2;
@@ -93,14 +91,6 @@ public class HandsClimbing
 		if(_value == Up._value)
 			return "Up";
 		return "FastUp";
-	}
-
-	public void print(String name)
-	{
-		PrintStream stream = System.err;
-		if(name != null)
-			stream.print(name + " = ");
-		stream.println(this);
 	}
 
 	private static HandsClimbing get(int value)

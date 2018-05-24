@@ -1360,7 +1360,7 @@ public class Orientation extends SmartMovingContext
 	private boolean isStairCompactFront(IBlockState state)
 	{
 		EnumFacing facing = getValue(state, BlockStairs.FACING, this._facing);
-		BlockStairs.EnumShape shape = (BlockStairs.EnumShape)getValue(state, BlockStairs.SHAPE);
+		BlockStairs.EnumShape shape = getValue(state, BlockStairs.SHAPE);
 
 		if(this == NZ)
 			return ((north(facing) && outer_left(shape)) || (south(facing) && outer_right(shape)) || (west(facing) && (straight(shape) || outer_right(shape) || outer_left(shape))));
@@ -1384,7 +1384,7 @@ public class Orientation extends SmartMovingContext
 	private boolean isStairCompactBack(IBlockState state)
 	{
 		EnumFacing facing = getValue(state, BlockStairs.FACING, this._facing);
-		BlockStairs.EnumShape shape = (BlockStairs.EnumShape)getValue(state, BlockStairs.SHAPE);
+		BlockStairs.EnumShape shape = getValue(state, BlockStairs.SHAPE);
 
 		if(this == NZ)
 			return ((north(facing) && inner_right(shape)) || (south(facing) && inner_left(shape)) || (east(facing) && (straight(shape) || inner_left(shape) || inner_right(shape))));
@@ -1452,7 +1452,7 @@ public class Orientation extends SmartMovingContext
 
 	private static boolean isTopStairCompact(IBlockState state)
 	{
-		return (BlockStairs.EnumHalf)getValue(state, BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
+		return getValue(state, BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
 	}
 
 	private static boolean isRedPowerWireTop(int coverSides)
@@ -1817,12 +1817,12 @@ public class Orientation extends SmartMovingContext
 
 	private static boolean isHalfBlockBottomMetaData(IBlockState state)
 	{
-		return (BlockSlab.EnumBlockHalf)getValue(state, BlockSlab.HALF) == BlockSlab.EnumBlockHalf.BOTTOM;
+		return getValue(state, BlockSlab.HALF) == BlockSlab.EnumBlockHalf.BOTTOM;
 	}
 
 	private static boolean isHalfBlockTopMetaData(IBlockState state)
 	{
-		return (BlockSlab.EnumBlockHalf)getValue(state, BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP;
+		return getValue(state, BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP;
 	}
 
 	private static boolean isHalfBlock(IBlockState state)
@@ -2032,7 +2032,7 @@ public class Orientation extends SmartMovingContext
 
 	private static boolean isDoorTop(IBlockState state)
 	{
-		return (BlockDoor.EnumDoorHalf)getValue(state, BlockDoor.HALF) == BlockDoor.EnumDoorHalf.UPPER;
+		return getValue(state, BlockDoor.HALF) == BlockDoor.EnumDoorHalf.UPPER;
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -2063,7 +2063,7 @@ public class Orientation extends SmartMovingContext
 		if (!getValue(state, BlockDoor.OPEN))
 			return facing;
 
-		switch((BlockDoor.EnumHingePosition)getValue(state, BlockDoor.HINGE))
+		switch(getValue(state, BlockDoor.HINGE))
 		{
 			case LEFT:
 				switch(facing)

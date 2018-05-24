@@ -184,6 +184,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 		return 0F;
 	}
 
+	@SuppressWarnings("deprecation")
 	protected float getNormalWaterBorder(int i, int j, int k)
 	{
 		int level = getValue(getState(i, j, k), BlockLiquid.LEVEL);

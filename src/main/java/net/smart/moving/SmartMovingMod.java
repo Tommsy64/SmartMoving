@@ -54,7 +54,6 @@ public class SmartMovingMod
 	}
 
 	@EventHandler
-	@SuppressWarnings("unused")
 	public void init(FMLPreInitializationEvent event)
 	{
 		if(isClient)
@@ -76,7 +75,6 @@ public class SmartMovingMod
 	}
 
 	@EventHandler
-	@SuppressWarnings("unused")
 	public void init(FMLInitializationEvent event)
 	{
 		NetworkRegistry.INSTANCE.newEventDrivenChannel(SmartMovingPacketStream.Id).register(this);
@@ -100,7 +98,6 @@ public class SmartMovingMod
 	}
 
 	@EventHandler
-	@SuppressWarnings("unused")
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		if(!isClient)
@@ -108,21 +105,18 @@ public class SmartMovingMod
 	}
 
 	@SubscribeEvent
-	@SuppressWarnings({ "static-method", "unused" })
 	public void tickStart(ClientTickEvent event)
 	{
 		SmartMovingContext.onTickInGame();
 	}
 
 	@SubscribeEvent
-	@SuppressWarnings({ "static-method", "unused" })
 	public void onPacketData(ServerCustomPacketEvent event)
 	{
 		SmartMovingPacketStream.receivePacket(event.getPacket(), SmartMovingServerComm.instance, net.smart.moving.playerapi.SmartMovingServerPlayerBase.getPlayerBase(((NetHandlerPlayServer)event.getHandler()).playerEntity));
 	}
 
 	@SubscribeEvent
-	@SuppressWarnings({ "static-method", "unused" })
 	public void onPacketData(ClientCustomPacketEvent event)
 	{
 		SmartMovingPacketStream.receivePacket(event.getPacket(), SmartMovingComm.instance, null);
@@ -133,19 +127,16 @@ public class SmartMovingMod
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@SuppressWarnings("static-method")
 	public Object getInstance(EntityPlayer entityPlayer)
 	{
 		return SmartMovingFactory.getInstance(entityPlayer);
 	}
 
-	@SuppressWarnings("static-method")
 	public Object getClient()
 	{
 		return SmartMovingContext.Client;
 	}
 
-	@SuppressWarnings("static-method")
 	public void checkForPresentModsAndInitializeOptions()
 	{
 		List<ModContainer> modList = Loader.instance().getActiveModList();

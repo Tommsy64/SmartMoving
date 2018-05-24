@@ -17,8 +17,6 @@
 
 package net.smart.moving;
 
-import java.io.*;
-
 public class FeetClimbing
 {
 	public static final int DownStep = 1;
@@ -86,14 +84,6 @@ public class FeetClimbing
 		if(_value == SlowUpWithSinkWithoutHands._value)
 			return "SlowUpWithSinkWithoutHands";
 		return "FastUp";
-	}
-
-	public void print(String name)
-	{
-		PrintStream stream = System.err;
-		if(name != null)
-			stream.print(name + " = ");
-		stream.println(this);
 	}
 
 	private static FeetClimbing get(int value)

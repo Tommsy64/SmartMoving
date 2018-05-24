@@ -1,6 +1,6 @@
 [submodule "SmartRender"]
 	path = SmartRender
-	url = https://github.com/JonnyNova/SmartRender.git
+	url = https://github.com/Tommsy64/SmartRender.git
 [submodule "PlayerAPI"]
 	path = PlayerAPI
 	url = https://github.com/Tommsy64/PlayerAPI.git

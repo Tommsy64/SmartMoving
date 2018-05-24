@@ -28,6 +28,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
@@ -158,9 +159,9 @@ public abstract class SmartMovingContext extends SmartRenderContext
 		return comparable == null ? null : property.getValueClass().cast(comparable);
 	}
 
-	public static Enum getValue(IBlockState state, PropertyEnum property)
+	public static <T extends Enum<T> & IStringSerializable> T getValue(IBlockState state, PropertyEnum<T> property)
 	{
-		return (Enum)state.getValue(property);
+		return state.getValue(property);
 	}
 
 	private static MinecraftServer lastMinecraftServer = null;
