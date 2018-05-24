@@ -91,10 +91,10 @@ public abstract class SmartMoving extends SmartMovingBase
 
 		if(isSliding)
 		{
-			int i = MathHelper.floor_double(sp.posX);
-			int j = MathHelper.floor_double(sp.getEntityBoundingBox().minY - 0.1F);
-			int k = MathHelper.floor_double(sp.posZ);
-			Block block = getBlock(sp.worldObj, i, j, k);
+			int i = MathHelper.floor(sp.posX);
+			int j = MathHelper.floor(sp.getEntityBoundingBox().minY - 0.1F);
+			int k = MathHelper.floor(sp.posZ);
+			Block block = getBlock(sp.world, i, j, k);
 			if(block != null)
 			{
 				double posY = sp.getEntityBoundingBox().minY + 0.1D;
@@ -109,7 +109,7 @@ public abstract class SmartMoving extends SmartMovingBase
 				{
 					double posX = sp.posX + getSpawnOffset();
 					double posZ = sp.posZ + getSpawnOffset();
-					sp.worldObj.spawnParticle(EnumParticleTypes.BLOCK_CRACK, posX, posY, posZ, motionX, motionY, motionZ, new int[] { Block.getStateId(getState(i, j, k)) });
+					sp.world.spawnParticle(EnumParticleTypes.BLOCK_CRACK, posX, posY, posZ, motionX, motionY, motionZ, new int[] { Block.getStateId(getState(i, j, k)) });
 					spawnSlindingParticle -= maxSpawnSlindingParticle;
 				}
 			}
@@ -117,12 +117,12 @@ public abstract class SmartMoving extends SmartMovingBase
 
 		if(isSwimming)
 		{
-			float posY = MathHelper.floor_double(sp.getEntityBoundingBox().minY) + 1.0F;
+			float posY = MathHelper.floor(sp.getEntityBoundingBox().minY) + 1.0F;
 			int x = (int)Math.floor(sp.posX);
 			int y = (int)Math.floor(posY - 0.5);
 			int z = (int)Math.floor(sp.posZ);
 
-			boolean isLava = isLava(sp.worldObj.getBlockState(new BlockPos(x, y, z)));
+			boolean isLava = isLava(sp.world.getBlockState(new BlockPos(x, y, z)));
 			spawnSwimmingParticle += horizontalSpeedSquare;
 
 			float maxSpawnSwimmingParticle = (isLava ? Config._lavaSwimParticlePeriodFactor.value : Config._swimParticlePeriodFactor.value) * 0.01F;
@@ -131,8 +131,8 @@ public abstract class SmartMoving extends SmartMovingBase
 				double posX = sp.posX + getSpawnOffset();
 				double posZ = sp.posZ + getSpawnOffset();
 				Particle splash = isLava ?
-						new ParticleSplash.Factory().createParticle(EnumParticleTypes.LAVA.getParticleID(), sp.worldObj, posX, posY, posZ, 0, 0.2, 0) :
-						new ParticleSplash.Factory().createParticle(EnumParticleTypes.WATER_SPLASH.getParticleID(), sp.worldObj, posX, posY, posZ, 0, 0.2, 0);
+						new ParticleSplash.Factory().createParticle(EnumParticleTypes.LAVA.getParticleID(), sp.world, posX, posY, posZ, 0, 0.2, 0) :
+						new ParticleSplash.Factory().createParticle(EnumParticleTypes.WATER_SPLASH.getParticleID(), sp.world, posX, posY, posZ, 0, 0.2, 0);
 				minecraft.effectRenderer.addEffect(splash);
 
 				spawnSwimmingParticle -= maxSpawnSwimmingParticle;

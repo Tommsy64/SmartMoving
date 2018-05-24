@@ -199,7 +199,7 @@ public class SmartMovingRender extends SmartRenderContext
 		if(!GL11.glGetBoolean(GL11.GL_ALPHA_TEST))
 			return;
 
-		SmartMovingSelf moving = (SmartMovingSelf)SmartMovingFactory.getInstance(minecraft.thePlayer);
+		SmartMovingSelf moving = (SmartMovingSelf)SmartMovingFactory.getInstance(minecraft.player);
 		if(moving != null && SmartMovingContext.Config.enabled && (SmartMovingContext.Options._displayExhaustionBar.value || SmartMovingContext.Options._displayJumpChargeBar.value))
 		{
 			ScaledResolution scaledresolution = new ScaledResolution(minecraft);
@@ -256,7 +256,7 @@ public class SmartMovingRender extends SmartRenderContext
 					int minFitnessToStartActionHalfs = (int)Math.floor(minFitnessToStartAction / maxExhaustion * 21F);
 					int minFitnessToStartActionFulls = minFitnessToStartActionHalfs / 2;
 
-					_jOffset = height - 39 - 10 - (minecraft.thePlayer.isInsideOfMaterial(Material.WATER) ? 10 : 0);
+					_jOffset = height - 39 - 10 - (minecraft.player.isInsideOfMaterial(Material.WATER) ? 10 : 0);
 					for(int i = 0; i < Math.min(fulls + half, 10); i++)
 					{
 						_iOffset = (width / 2 + 90) - (i + 1) * 8;
@@ -308,7 +308,7 @@ public class SmartMovingRender extends SmartRenderContext
 					int fulls = max ? 10 : (int)Math.ceil(((jumpCharge - 2) * 10D) / maxJumpCharge);
 					int half = max ? 0 : (int)Math.ceil((jumpCharge * 10D) / maxJumpCharge) - fulls;
 
-					_jOffset = height - 39 - 10 - (minecraft.thePlayer.getTotalArmorValue() > 0 ? 10 : 0);
+					_jOffset = height - 39 - 10 - (minecraft.player.getTotalArmorValue() > 0 ? 10 : 0);
 					for(int i = 0; i < fulls + half; i++)
 					{
 						_iOffset = (width / 2 - 91) + i * 8;

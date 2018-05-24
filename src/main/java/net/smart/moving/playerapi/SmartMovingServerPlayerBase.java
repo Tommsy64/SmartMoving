@@ -126,7 +126,7 @@ public class SmartMovingServerPlayerBase extends ServerPlayerBase implements IEn
 	@Override
 	public List<?> getEntitiesExcludingPlayer(AxisAlignedBB box)
 	{
-		return player.worldObj.getEntitiesWithinAABBExcludingEntity(player, box);
+		return player.world.getEntitiesWithinAABBExcludingEntity(player, box);
 	}
 
 	@Override
@@ -237,7 +237,7 @@ public class SmartMovingServerPlayerBase extends ServerPlayerBase implements IEn
 	@Override
 	public void sendPacketToTrackedPlayers(FMLProxyPacket packet)
 	{
-		player.mcServer.worldServerForDimension(player.dimension).getEntityTracker().sendToAllTrackingEntity(player, packet);
+		player.mcServer.getWorld(player.dimension).getEntityTracker().sendToTracking(player, packet);
 	}
 
 	@Override

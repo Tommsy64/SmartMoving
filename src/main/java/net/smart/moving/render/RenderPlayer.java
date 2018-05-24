@@ -55,7 +55,7 @@ public class RenderPlayer extends net.smart.render.RenderPlayer implements IRend
 	}
 
 	@Override
-	protected void rotateCorpse(AbstractClientPlayer entityplayer, float totalTime, float actualRotation, float f2)
+	protected void applyRotations(AbstractClientPlayer entityplayer, float totalTime, float actualRotation, float f2)
 	{
 		render.rotateCorpse(entityplayer, totalTime, actualRotation, f2);
 	}
@@ -63,7 +63,7 @@ public class RenderPlayer extends net.smart.render.RenderPlayer implements IRend
 	@Override
 	public void superRenderRotateCorpse(AbstractClientPlayer entityplayer, float totalTime, float actualRotation, float f2)
 	{
-		super.rotateCorpse(entityplayer, totalTime, actualRotation, f2);
+		super.applyRotations(entityplayer, totalTime, actualRotation, f2);
 	}
 
 	@Override

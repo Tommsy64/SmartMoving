@@ -2,7 +2,7 @@
 Smart Moving Mod
 ================
 
-Version 16.4 for Minecraft Client 1.10.2
+Version 16.4 for Minecraft Client 1.12.2
 
 by Divisor and JonnyNova
 

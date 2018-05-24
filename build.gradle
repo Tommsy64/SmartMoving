@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -73,6 +73,11 @@ processResources {
 }
 
 jar {
+    manifest {
+        attributes(
+        	'FMLAT': "${project.name.toLowerCase()}_at.cfg"
+        )
+    }
     configurations.embedded.each { dep ->
         from(project.zipTree(dep)) {
             exclude 'META-INF', 'META-INF/**'

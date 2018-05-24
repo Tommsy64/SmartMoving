@@ -20,6 +20,7 @@ package net.smart.moving;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockTrapDoor;
+import net.minecraft.block.BlockWall;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -32,7 +33,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.smart.moving.config.SmartMovingOptions;
-import net.smart.utilities.BlockWallUtil;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,7 +54,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 		if (sp instanceof EntityPlayerSP)
 		{
 			esp = (EntityPlayerSP) sp;
-			if(Minecraft.getMinecraft().thePlayer == null)
+			if(Minecraft.getMinecraft().player == null)
 			{
 				Options.resetForNewGame();
 				Config = Options;
@@ -66,26 +66,26 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	public Block getBlock(int x, int y, int z)
 	{
-		return getBlock(sp.worldObj, x, y, z);
+		return getBlock(sp.world, x, y, z);
 	}
 
 	public IBlockState getState(BlockPos blockPos) {
-		return getState(sp.worldObj, blockPos);
+		return getState(sp.world, blockPos);
 	}
 
 	public IBlockState getState(int x, int y, int z)
 	{
-		return getState(sp.worldObj, x, y, z);
+		return getState(sp.world, x, y, z);
 	}
 
 	public Material getMaterial(int x, int y, int z)
 	{
-		return getMaterial(sp.worldObj, x, y, z);
+		return getMaterial(sp.world, x, y, z);
 	}
 
 	public boolean isAirBlock(int x, int y, int z)
 	{
-		return sp.worldObj.isAirBlock(new BlockPos(x, y, z));
+		return sp.world.isAirBlock(new BlockPos(x, y, z));
 	}
 
 	public AxisAlignedBB getBoundingBox()
@@ -102,7 +102,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 	{
 		float diffMotionXStrafing = 0, diffMotionXForward = 0, diffMotionZStrafing = 0, diffMotionZForward = 0;
 		{
-			float total = MathHelper.sqrt_float(moveStrafing * moveStrafing + moveForward * moveForward);
+			float total = MathHelper.sqrt(moveStrafing * moveStrafing + moveForward * moveForward);
 			if(total >= 0.01F)
 			{
 				if(total < 1.0F)
@@ -124,10 +124,10 @@ public abstract class SmartMovingBase extends SmartMovingContext
 		float divingVerticalFactor = -MathHelper.sin(rotation) * Math.signum(moveForward);
 
 		float diffMotionX = diffMotionXForward * divingHorizontalFactor + diffMotionXStrafing;
-		float diffMotionY = MathHelper.sqrt_float(diffMotionXForward * diffMotionXForward + diffMotionZForward * diffMotionZForward) * divingVerticalFactor + moveUpward;
+		float diffMotionY = MathHelper.sqrt(diffMotionXForward * diffMotionXForward + diffMotionZForward * diffMotionZForward) * divingVerticalFactor + moveUpward;
 		float diffMotionZ = diffMotionZForward * divingHorizontalFactor + diffMotionZStrafing;
 
-		float total = MathHelper.sqrt_float(MathHelper.sqrt_float(diffMotionX * diffMotionX + diffMotionZ * diffMotionZ) + diffMotionY * diffMotionY);
+		float total = MathHelper.sqrt(MathHelper.sqrt(diffMotionX * diffMotionX + diffMotionZ * diffMotionZ) + diffMotionY * diffMotionY);
 		if(total > 0.01F)
 		{
 			float factor = speedFactor / total;
@@ -156,7 +156,6 @@ public abstract class SmartMovingBase extends SmartMovingContext
 		return null;
 	}
 
-	@SuppressWarnings("static-method")
 	protected boolean isLava(IBlockState state)
 	{
 		return state.getMaterial() == Material.LAVA;
@@ -207,7 +206,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 				return 1F;
 			if(type == 1)
 			{
-				Block aboveBlock = getBlock(sp.worldObj, i, j + 1, k);
+				Block aboveBlock = getBlock(sp.world, i, j + 1, k);
 				if(Orientation.getFiniteLiquidWater(aboveBlock) > 0)
 					return 1F;
 				return getValue(getState(i, j, k), BlockLiquid.LEVEL) / 16F;
@@ -258,21 +257,21 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	protected int getOnLadderOrVine(int maxResult, boolean faceOnly, boolean ladder, boolean vine, boolean isSmall)
 	{
-		int i = MathHelper.floor_double(sp.posX);
-		int minj = MathHelper.floor_double(getBoundingBox().minY);
-		int k = MathHelper.floor_double(sp.posZ);
+		int i = MathHelper.floor(sp.posX);
+		int minj = MathHelper.floor(getBoundingBox().minY);
+		int k = MathHelper.floor(sp.posZ);
 
 		if(Config.isStandardBaseClimb())
 		{
-			Block block = getBlock(sp.worldObj, i, minj, k);
+			Block block = getBlock(sp.world, i, minj, k);
 			if(ladder)
 				if(vine)
-					return Orientation.isClimbable(sp.worldObj, i, minj, k) ? 1 : 0;
+					return Orientation.isClimbable(sp.world, i, minj, k) ? 1 : 0;
 				else
-					return block != Block.getBlockFromName("vine") && Orientation.isClimbable(sp.worldObj, i, minj, k) ? 1 : 0;
+					return block != Block.getBlockFromName("vine") && Orientation.isClimbable(sp.world, i, minj, k) ? 1 : 0;
 			else
 				if(vine)
-					return block == Block.getBlockFromName("vine") && Orientation.isClimbable(sp.worldObj, i, minj, k) ? 1 : 0;
+					return block == Block.getBlockFromName("vine") && Orientation.isClimbable(sp.world, i, minj, k) ? 1 : 0;
 				else
 					return 0;
 		}
@@ -286,7 +285,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 				facedOnlyTo = Orientation.getClimbingOrientations(sp, true, false);
 
 			int result = 0;
-			int maxj = MathHelper.floor_double(sp.getEntityBoundingBox().minY + Math.ceil(getBoundingBox().maxY - getBoundingBox().minY)) - 1;
+			int maxj = MathHelper.floor(sp.getEntityBoundingBox().minY + Math.ceil(getBoundingBox().maxY - getBoundingBox().minY)) - 1;
 			for(int j = minj; j <= maxj; j++)
 			{
 				IBlockState state = getState(i, j, k);
@@ -296,7 +295,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 					Orientation localLadderOrientation = null;
 					if(localLadder)
 					{
-						localLadderOrientation = Orientation.getKnownLadderOrientation(sp.worldObj, i, j, k);
+						localLadderOrientation = Orientation.getKnownLadderOrientation(sp.world, i, j, k);
 						if(facedOnlyTo == null || facedOnlyTo.contains(localLadderOrientation))
 							result++;
 					}
@@ -311,7 +310,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 							IBlockState remoteState = getState(i + direction._i, j, k + direction._k);
 							if(Orientation.isKnownLadder(remoteState))
 							{
-								Orientation remoteLadderOrientation = Orientation.getKnownLadderOrientation(sp.worldObj, i + direction._i, j, k + direction._k);
+								Orientation remoteLadderOrientation = Orientation.getKnownLadderOrientation(sp.world, i + direction._i, j, k + direction._k);
 								if(remoteLadderOrientation.rotate(180) == direction)
 									result++;
 							}
@@ -331,7 +330,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 						while(iterator.hasNext())
 						{
 							Orientation climbOrientation = iterator.next();
-							if(climbOrientation.hasVineOrientation(sp.worldObj, i, j, k) && climbOrientation.isRemoteSolid(sp.worldObj, i, j, k))
+							if(climbOrientation.hasVineOrientation(sp.world, i, j, k) && climbOrientation.isRemoteSolid(sp.world, i, j, k))
 							{
 								result++;
 								break;
@@ -348,16 +347,16 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	public boolean climbingUpIsBlockedByLadder()
 	{
-		if(sp.isCollidedHorizontally && sp.isCollidedVertically && !sp.onGround && esp.movementInput.moveForward > 0F)
+		if(sp.collidedHorizontally && sp.collidedVertically && !sp.onGround && esp.movementInput.moveForward > 0F)
 		{
 			Orientation orientation = Orientation.getOrientation(sp, 20F, true, false);
 			if(orientation != null)
 			{
-				int i = MathHelper.floor_double(sp.posX);
-				int j = MathHelper.floor_double(getBoundingBox().maxY);
-				int k = MathHelper.floor_double(sp.posZ);
+				int i = MathHelper.floor(sp.posX);
+				int j = MathHelper.floor(getBoundingBox().maxY);
+				int k = MathHelper.floor(sp.posZ);
 				if(Orientation.isLadder(getState(i, j, k)))
-					return Orientation.getKnownLadderOrientation(sp.worldObj, i, j, k) == orientation;
+					return Orientation.getKnownLadderOrientation(sp.world, i, j, k) == orientation;
 			}
 		}
 		return false;
@@ -365,16 +364,16 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	public boolean climbingUpIsBlockedByTrapDoor()
 	{
-		if(sp.isCollidedHorizontally && sp.isCollidedVertically && !sp.onGround && esp.movementInput.moveForward > 0F)
+		if(sp.collidedHorizontally && sp.collidedVertically && !sp.onGround && esp.movementInput.moveForward > 0F)
 		{
 			Orientation orientation = Orientation.getOrientation(sp, 20F, true, false);
 			if(orientation != null)
 			{
-				int i = MathHelper.floor_double(sp.posX);
-				int j = MathHelper.floor_double(getBoundingBox().maxY);
-				int k = MathHelper.floor_double(sp.posZ);
+				int i = MathHelper.floor(sp.posX);
+				int j = MathHelper.floor(getBoundingBox().maxY);
+				int k = MathHelper.floor(sp.posZ);
 				if(Orientation.isTrapDoor(getState(i, j, k)))
-					return Orientation.getOpenTrapDoorOrientation(sp.worldObj, i, j, k) == orientation;
+					return Orientation.getOpenTrapDoorOrientation(sp.world, i, j, k) == orientation;
 			}
 		}
 		return false;
@@ -382,19 +381,17 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	public boolean climbingUpIsBlockedByCobbleStoneWall()
 	{
-		if(sp.isCollidedHorizontally && sp.isCollidedVertically && !sp.onGround && esp.movementInput.moveForward > 0F)
+		if(sp.collidedHorizontally && sp.collidedVertically && !sp.onGround && esp.movementInput.moveForward > 0F)
 		{
 			Orientation orientation = Orientation.getOrientation(sp, 20F, true, false);
 			if(orientation != null)
 			{
-				int i = MathHelper.floor_double(sp.posX);
-				int j = MathHelper.floor_double(getBoundingBox().maxY);
-				int k = MathHelper.floor_double(sp.posZ);
-				if(getBlock(i, j, k) == Block.getBlockFromName("cobblestone_wall"))
-					return BlockWallUtil.canConnectTo(
-							Block.getBlockFromName("cobblestone_wall"),
-							sp.worldObj,
-							new BlockPos(i - orientation._i, j, k - orientation._k));
+				int i = MathHelper.floor(sp.posX);
+				int j = MathHelper.floor(getBoundingBox().maxY);
+				int k = MathHelper.floor(sp.posZ);
+				Block block = getBlock(i, j, k);
+				if(block == Block.getBlockFromName("cobblestone_wall"))
+					((BlockWall) block).canConnectTo(sp.world, new BlockPos(i - orientation._i, j, k - orientation._k), orientation._facing);
 			}
 		}
 		return false;
@@ -404,7 +401,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 	{
 		AxisAlignedBB bb = getBoundingBox();
 		bb = new AxisAlignedBB(bb.minX, yMin, bb.minZ, bb.maxX, yMax, bb.maxZ);
-		return sp.worldObj.getCollisionBoxes(sp, horizontalTolerance == 0 ? bb : bb.expand(horizontalTolerance, 0, horizontalTolerance));
+		return sp.world.getCollisionBoxes(sp, horizontalTolerance == 0 ? bb : bb.expand(horizontalTolerance, 0, horizontalTolerance));
 	}
 
 	protected boolean isPlayerInSolidBetween(double yMin, double yMax)
@@ -447,10 +444,10 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	protected double getMaxPlayerLiquidBetween(double yMin, double yMax)
 	{
-		int i = MathHelper.floor_double(sp.posX);
-		int jMin = MathHelper.floor_double(yMin);
-		int jMax = MathHelper.floor_double(yMax);
-		int k = MathHelper.floor_double(sp.posZ);
+		int i = MathHelper.floor(sp.posX);
+		int jMin = MathHelper.floor(yMin);
+		int jMax = MathHelper.floor(yMax);
+		int k = MathHelper.floor(sp.posZ);
 
 		for(int j = jMax; j >= jMin; j--)
 		{
@@ -463,10 +460,10 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	protected double getMinPlayerLiquidBetween(double yMin, double yMax)
 	{
-		int i = MathHelper.floor_double(sp.posX);
-		int jMin = MathHelper.floor_double(yMin);
-		int jMax = MathHelper.floor_double(yMax);
-		int k = MathHelper.floor_double(sp.posZ);
+		int i = MathHelper.floor(sp.posX);
+		int jMin = MathHelper.floor(yMin);
+		int jMax = MathHelper.floor(yMax);
+		int k = MathHelper.floor(sp.posZ);
 
 		for(int j = jMin; j <= jMax; j++)
 		{
@@ -550,8 +547,8 @@ public abstract class SmartMovingBase extends SmartMovingContext
 	{
 		IBlockState blockState = getState(pos);
 		IBlockState upBlockState = getState(pos.up());
-		return !blockState.getBlock().isNormalCube(blockState, sp.worldObj, pos) &&
-				(!top || !upBlockState.getBlock().isNormalCube(blockState, sp.worldObj, pos.up()));
+		return !blockState.getBlock().isNormalCube(blockState, sp.world, pos) &&
+				(!top || !upBlockState.getBlock().isNormalCube(blockState, sp.world, pos.up()));
 	}
 
 	public boolean isInsideOfMaterial(Material material)
@@ -559,9 +556,9 @@ public abstract class SmartMovingBase extends SmartMovingContext
 		if(SmartMovingOptions.hasFiniteLiquid && material == Material.WATER)
 		{
 			double d = sp.posY + sp.getEyeHeight();
-			int i = MathHelper.floor_double(sp.posX);
-			int j = MathHelper.floor_float(MathHelper.floor_double(d));
-			int k = MathHelper.floor_double(sp.posZ);
+			int i = MathHelper.floor(sp.posX);
+			int j = MathHelper.floor(MathHelper.floor(d));
+			int k = MathHelper.floor(sp.posZ);
 			Block l = getBlock(i, j, k);
 			float border;
 			if(l != null && (border = getFiniteLiquidWaterBorder(i, j, k, l)) > 0)
@@ -582,7 +579,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 		boolean isInWeb = isp.getIsInWebField();
 		AxisAlignedBB boundingBox = sp.getEntityBoundingBox();
 		boolean onGround = sp.onGround;
-		World worldObj = sp.worldObj;
+		World worldObj = sp.world;
 		Entity _this = sp;
 		float stepHeight = sp.stepHeight;
 
@@ -637,7 +634,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 				}
 			}
 		}
-		List<AxisAlignedBB> list1 = worldObj.getCollisionBoxes(_this, boundingBox.addCoord(x, y, z));
+		List<AxisAlignedBB> list1 = worldObj.getCollisionBoxes(_this, boundingBox.expand(x, y, z));
 		AxisAlignedBB axisalignedbb = boundingBox;
 		AxisAlignedBB axisalignedbb1;
 		for (Iterator<AxisAlignedBB> iterator = list1.iterator(); iterator.hasNext(); y = axisalignedbb1.calculateYOffset(boundingBox, y)) {
@@ -661,9 +658,9 @@ public abstract class SmartMovingBase extends SmartMovingContext
 			double d11 = z;
 			boundingBox = axisalignedbb;
 			y = stepHeight;
-			List<AxisAlignedBB> list = worldObj.getCollisionBoxes(_this, boundingBox.addCoord(d6, y, d8));
+			List<AxisAlignedBB> list = worldObj.getCollisionBoxes(_this, boundingBox.expand(d6, y, d8));
 			AxisAlignedBB axisalignedbb4 = boundingBox;
-			AxisAlignedBB axisalignedbb5 = axisalignedbb4.addCoord(d6, 0.0D, d8);
+			AxisAlignedBB axisalignedbb5 = axisalignedbb4.expand(d6, 0.0D, d8);
 			double d12 = y;
 			AxisAlignedBB axisalignedbb6;
 			for (Iterator<AxisAlignedBB> iterator1 = list.iterator(); iterator1.hasNext(); d12 = axisalignedbb6.calculateYOffset(axisalignedbb5, d12)) {
@@ -767,7 +764,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 	{
 		double d = sp.posX - sp.prevPosX;
 		double d1 = sp.posZ - sp.prevPosZ;
-		float f = MathHelper.sqrt_double(d * d + d1 * d1);
+		float f = MathHelper.sqrt(d * d + d1 * d1);
 		if(f < 0.05F && f > 0.02 && isSmall)
 		{
 			float f1 = ((float)Math.atan2(d1, d) * 180F) / 3.141593F - 90F;
@@ -823,9 +820,9 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	public Block getOverGroundBlockId(double distance)
 	{
-		int x = MathHelper.floor_double(sp.posX);
-		int y = MathHelper.floor_double(getBoundingBox().minY);
-		int z = MathHelper.floor_double(sp.posZ);
+		int x = MathHelper.floor(sp.posX);
+		int y = MathHelper.floor(getBoundingBox().minY);
+		int z = MathHelper.floor(sp.posZ);
 		int minY = y - (int)Math.ceil(distance);
 
 		if(esp == null)
@@ -845,17 +842,17 @@ public abstract class SmartMovingBase extends SmartMovingContext
 
 	public void reverseHandleMaterialAcceleration()
 	{
-		World _this = sp.worldObj;
-		AxisAlignedBB axisalignedbb = getBoundingBox().expand(0.0D, -0.40000000596046448D, 0.0D).contract(0.001D);
+		World _this = sp.world;
+		AxisAlignedBB axisalignedbb = getBoundingBox().expand(0.0D, -0.40000000596046448D, 0.0D).shrink(0.001D);
 		Material material = Material.WATER;
 		Entity entity = sp;
 
-		int i = MathHelper.floor_double(axisalignedbb.minX);
-		int j = MathHelper.floor_double(axisalignedbb.maxX + 1.0D);
-		int k = MathHelper.floor_double(axisalignedbb.minY);
-		int l = MathHelper.floor_double(axisalignedbb.maxY + 1.0D);
-		int i1 = MathHelper.floor_double(axisalignedbb.minZ);
-		int j1 = MathHelper.floor_double(axisalignedbb.maxZ + 1.0D);
+		int i = MathHelper.floor(axisalignedbb.minX);
+		int j = MathHelper.floor(axisalignedbb.maxX + 1.0D);
+		int k = MathHelper.floor(axisalignedbb.minY);
+		int l = MathHelper.floor(axisalignedbb.maxY + 1.0D);
+		int i1 = MathHelper.floor(axisalignedbb.minZ);
+		int j1 = MathHelper.floor(axisalignedbb.maxZ + 1.0D);
 		if (!_this.isAreaLoaded(new BlockPos(i, k, i1), new BlockPos(j, l, j1), true))
 			return;
 
@@ -881,9 +878,9 @@ public abstract class SmartMovingBase extends SmartMovingContext
 		{
 			vec3 = vec3.normalize();
 			double d1 = -0.014D; // instead +0.014D for reversal
-			entity.motionX += vec3.xCoord * d1;
-			entity.motionY += vec3.yCoord * d1;
-			entity.motionZ += vec3.zCoord * d1;
+			entity.motionX += vec3.x * d1;
+			entity.motionY += vec3.y * d1;
+			entity.motionZ += vec3.z * d1;
 		}
 	}
 }

@@ -225,7 +225,7 @@ public class SmartMovingOptions extends SmartMovingClientConfig
 
 	public void writeServerReconfigMessageToChat(boolean wasEnabled, String username, boolean everyone)
 	{
-		if(Minecraft.getMinecraft().thePlayer.getGameProfile().getName().equals(username))
+		if(Minecraft.getMinecraft().player.getGameProfile().getName().equals(username))
 			writeClientConfigMessageToChat(everyone);
 		else if(_configChatServer.value)
 		{
@@ -272,7 +272,7 @@ public class SmartMovingOptions extends SmartMovingClientConfig
 
 	public void writeServerSpeedMessageToChat(String username, boolean everyone)
 	{
-		if(Minecraft.getMinecraft().thePlayer.getGameProfile().getName().equals(username))
+		if(Minecraft.getMinecraft().player.getGameProfile().getName().equals(username))
 			writeClientSpeedMessageToChat(everyone);
 		else if(_speedChatServer.value)
 		{

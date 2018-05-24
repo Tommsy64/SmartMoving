@@ -21,6 +21,8 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import org.apache.logging.log4j.Logger;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Mod.*;
@@ -42,7 +44,9 @@ public class SmartMovingMod
 	final static String NAME = "Smart Moving";
 	final static String VERSION = "@VERSION@";
 
-	protected static String ModComVersion = "2.4";
+	protected static final String COMMUNICATION_VERSION = "2.4";
+	
+	public static Logger log;
 
 	private final boolean isClient;
 
@@ -56,6 +60,7 @@ public class SmartMovingMod
 	@EventHandler
 	public void init(FMLPreInitializationEvent event)
 	{
+		log = event.getModLog();
 		if(isClient)
 		{
 			hasRenderer = Loader.isModLoaded("RenderPlayerAPI");
@@ -113,7 +118,7 @@ public class SmartMovingMod
 	@SubscribeEvent
 	public void onPacketData(ServerCustomPacketEvent event)
 	{
-		SmartMovingPacketStream.receivePacket(event.getPacket(), SmartMovingServerComm.instance, net.smart.moving.playerapi.SmartMovingServerPlayerBase.getPlayerBase(((NetHandlerPlayServer)event.getHandler()).playerEntity));
+		SmartMovingPacketStream.receivePacket(event.getPacket(), SmartMovingServerComm.instance, net.smart.moving.playerapi.SmartMovingServerPlayerBase.getPlayerBase(((NetHandlerPlayServer)event.getHandler()).player));
 	}
 
 	@SubscribeEvent

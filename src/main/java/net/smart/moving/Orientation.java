@@ -42,7 +42,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.smart.moving.config.SmartMovingOptions;
-import net.smart.utilities.BlockWallUtil;
 import net.smart.utilities.Name;
 import net.smart.utilities.Reflect;
 
@@ -88,7 +87,7 @@ public class Orientation extends SmartMovingContext
 	protected int _i, _k;
 	private boolean _isDiagonal;
 	private Set<EnumFacing> _facings;
-	private EnumFacing _facing;
+	final EnumFacing _facing;
 	private float _directionAngle;
 	private float _mimimumClimbingAngle;
 	private float _maximumClimbingAngle;
@@ -105,9 +104,9 @@ public class Orientation extends SmartMovingContext
 			_facings.add(facing);
 
 		All.add(this);
+		_facing = facings.length > 0 ? facings[0] : null;
 		if (facings.length == 1)
 		{
-			_facing = facings[0];
 			Orthogonals.add(this);
 			FacingToOrientation.put(_facing, this);
 		}
@@ -1101,7 +1100,7 @@ public class Orientation extends SmartMovingContext
 	{
 		BlockPos position = new BlockPos(x, y, z);
 		IBlockState blockState = world.getBlockState(position);
-		return blockState.getBlock().isLadder(blockState, world, position, Minecraft.getMinecraft().thePlayer);
+		return blockState.getBlock().isLadder(blockState, world, position, Minecraft.getMinecraft().player);
 	}
 
 	private boolean isOnLadderFront(int j_offset)
@@ -1229,7 +1228,6 @@ public class Orientation extends SmartMovingContext
 				return this == ZZ;
 	}
 
-	@SuppressWarnings({ "static-method", "unused" })
 	private boolean isOnAnchorFront(int j_offset)
 	{
 		/*IBlockState state = getBaseBlockState(j_offset);
@@ -1736,18 +1734,17 @@ public class Orientation extends SmartMovingContext
 			getWallFlag(this.rotate(-90), remote_i, j_offset, remote_k, state);
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	private boolean getWallFlag(Orientation direction, int i, int j_offset, int k, IBlockState state)
 	{
 		Block block = state.getBlock();
 		if(block instanceof BlockPane)
-			return ((BlockPane)block).canPaneConnectToBlock(getBlock(world, i + direction._i, j_offset, k + direction._k));
+			return ((BlockPane)block).canPaneConnectTo(world, new BlockPos(i + direction._i, j_offset, k + direction._k), this._facing);
 		else if(isFenceBase(state))
 		{
 			if(block instanceof BlockFence)
-				return ((BlockFence)block).canConnectTo(world, new BlockPos(i + direction._i, local_offset + j_offset, k + direction._k));
+				return ((BlockFence) block).canConnectTo(world, new BlockPos(i + direction._i, local_offset + j_offset, k + direction._k), this._facing);
 			if(block instanceof BlockWall)
-				return BlockWallUtil.canConnectTo(block, world, new BlockPos(i + direction._i, local_offset + j_offset, k + direction._k));
+				return ((BlockWall) block).canConnectTo(world, new BlockPos(i + direction._i, local_offset + j_offset, k + direction._k), this._facing);
 			else if(SmartMovingOptions.hasBetterMisc && _canConnectFenceTo != null)
 				return (Boolean)Reflect.Invoke(_canConnectFenceTo, block, world, i + direction._i, local_offset + j_offset, k + direction._k);
 		}
@@ -2422,7 +2419,7 @@ public class Orientation extends SmartMovingContext
 		crawl = isClimbCrawling || isCrawlClimbing || isCrawling;
 
 		double offset_jhd = base_jhd + offset_halfs;
-		int offset_jh = MathHelper.floor_double(offset_jhd);
+		int offset_jh = MathHelper.floor(offset_jhd);
 		jh_offset = offset_jhd - offset_jh;
 
 		all_j = offset_jh / 2;

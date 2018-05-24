@@ -75,7 +75,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		prevPacketState = -1;
 	}
 
-	public void moveEntityWithHeading(float moveStrafing, float moveForward)
+	public void moveEntityWithHeading(float strafe, float vertical, float forward)
 	{
 		if(sp.motionX == 0 && prevMotionX < 0.005)
 			sp.motionX = prevMotionX;
@@ -88,17 +88,17 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			double d3 = sp.motionY;
 			float f2 = sp.jumpMovementFactor;
 			sp.jumpMovementFactor = 0.05F;
-			superMoveEntityWithHeading(moveStrafing, moveForward);
+			superMoveEntityWithHeading(strafe, vertical, forward);
 			sp.motionY = d3 * 0.59999999999999998D;
 			sp.jumpMovementFactor = f2;
 		}
 		else
 		{
-			superMoveEntityWithHeading(moveStrafing, moveForward);
+			superMoveEntityWithHeading(strafe, vertical, forward);
 		}
 	}
 
-	private void superMoveEntityWithHeading(float moveStrafing, float moveForward)
+	private void superMoveEntityWithHeading(float strage, float vertical, float forward)
 	{
 		if(isRunning() && !Config.isRunningEnabled())
 			sp.setSprinting(false);
@@ -116,19 +116,19 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		double d1_S = sp.posY;
 		double d2_S = sp.posZ;
 
-		if(sp.isCollidedHorizontally)
+		if(sp.collidedHorizontally)
 		{
 			lastHorizontalCollisionX = sp.posX;
 			lastHorizontalCollisionZ = sp.posZ;
 		}
 
-		float speedFactor = this.getSpeedFactor(moveForward, moveStrafing);
+		float speedFactor = this.getSpeedFactor(forward, strage);
 
-		boolean isLiquidClimbing = Config.isFreeClimbingEnabled() && sp.fallDistance <= 3.0 && wantClimbUp && sp.isCollidedHorizontally && !isDiving;
-		boolean handledSwimming = handleSwimming(moveForward, moveStrafing, speedFactor, wasSwimming, wasDiving, isLiquidClimbing, wasJumpingOutOfWater);
-		boolean handledLava = handleLava(moveForward, moveStrafing, handledSwimming, isLiquidClimbing);
-		boolean handledAlternativeFlying = handleAlternativeFlying(moveForward, moveStrafing, speedFactor, handledSwimming, handledLava);
-		handleLand(moveForward, moveStrafing, speedFactor, handledSwimming, handledLava, handledAlternativeFlying, wasShortInWater, wasClimbing, wasCeilingClimbing);
+		boolean isLiquidClimbing = Config.isFreeClimbingEnabled() && sp.fallDistance <= 3.0 && wantClimbUp && sp.collidedHorizontally && !isDiving;
+		boolean handledSwimming = handleSwimming(forward, strage, speedFactor, wasSwimming, wasDiving, isLiquidClimbing, wasJumpingOutOfWater);
+		boolean handledLava = handleLava(forward, strage, handledSwimming, isLiquidClimbing);
+		boolean handledAlternativeFlying = handleAlternativeFlying(forward, strage, speedFactor, handledSwimming, handledLava);
+		handleLand(forward, strage, speedFactor, handledSwimming, handledLava, handledAlternativeFlying, wasShortInWater, wasClimbing, wasCeilingClimbing);
 
 		handleWallJumping();
 
@@ -234,9 +234,9 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			{
 				resetSwimming();
 
-				int i = MathHelper.floor_double(sp.posX);
-				int j = MathHelper.floor_double(getBoundingBox().minY);
-				int k = MathHelper.floor_double(sp.posZ);
+				int i = MathHelper.floor(sp.posX);
+				int j = MathHelper.floor(getBoundingBox().minY);
+				int k = MathHelper.floor(sp.posZ);
 
 				boolean swimming = false;
 				boolean diving = false;
@@ -267,7 +267,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 					HashSet<Orientation> orientations = Orientation.getClimbingOrientations(sp, true, true);
 					Iterator<Orientation> iterator = orientations.iterator();
 					while(iterator.hasNext())
-						if(!(wantShallowSwim &= !iterator.next().isTunnelAhead(sp.worldObj, i, j, k)))
+						if(!(wantShallowSwim &= !iterator.next().isTunnelAhead(sp.world, i, j, k)))
 							break;
 				}
 
@@ -465,7 +465,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 						else
 							waterMovementTicks = 0;
 
-						boolean wantJumpOutOfWater = (moveForward != 0 || moveStrafing != 0) && sp.isCollidedHorizontally && diveUp && !isSlow;
+						boolean wantJumpOutOfWater = (moveForward != 0 || moveStrafing != 0) && sp.collidedHorizontally && diveUp && !isSlow;
 						isJumpingOutOfWater = wantJumpOutOfWater && (waterMovementTicks > 10 || sp.onGround || wasJumpingOutOfWater);
 
 						if(diving)
@@ -508,7 +508,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 							{
 								// from swimming/diving in shallow water to walking in shallow water
 								resetHeightOffset();
-								sp.moveEntity(0, getMaxPlayerSolidBetween(getBoundingBox().minY, getBoundingBox().maxY, 0) - getBoundingBox().minY, 0);
+								sp.move(MoverType.SELF, 0, getMaxPlayerSolidBetween(getBoundingBox().minY, getBoundingBox().maxY, 0) - getBoundingBox().minY, 0);
 								isCrawling = false;
 								isDiving = false;
 								isSwimming = false;
@@ -519,7 +519,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 						if(moveFlying)
 							moveFlying(0f, moveStrafing, moveForward, 0.02F * speedFactor, false);
-						sp.moveEntity(sp.motionX, sp.motionY, sp.motionZ);
+						sp.move(MoverType.SELF, sp.motionX, sp.motionY, sp.motionZ);
 					}
 				}
 			}
@@ -541,13 +541,13 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 				double dY = sp.posY;
 				moveFlying(0f, moveStrafing, moveForward, 0.02F, false);
-				sp.moveEntity(sp.motionX, sp.motionY, sp.motionZ);
+				sp.move(MoverType.SELF, sp.motionX, sp.motionY, sp.motionZ);
 
 				sp.motionX *= 0.80000001192092896D;
 				sp.motionY *= 0.80000001192092896D;
 				sp.motionZ *= 0.80000001192092896D;
 				sp.motionY -= 0.02D;
-				if(sp.isCollidedHorizontally && sp.isOffsetPositionInLiquid(sp.motionX, ((sp.motionY + 0.60000002384185791D) - sp.posY) + dY, sp.motionZ))
+				if(sp.collidedHorizontally && sp.isOffsetPositionInLiquid(sp.motionX, ((sp.motionY + 0.60000002384185791D) - sp.posY) + dY, sp.motionZ))
 				{
 					sp.motionY = 0.30000001192092896D;
 				}
@@ -568,12 +568,12 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 			double d1 = sp.posY;
 			moveFlying(0f, moveStrafing, moveForward, 0.02F, false);
-			sp.moveEntity(sp.motionX, sp.motionY, sp.motionZ);
+			sp.move(MoverType.SELF, sp.motionX, sp.motionY, sp.motionZ);
 			sp.motionX *= 0.5D;
 			sp.motionY *= 0.5D;
 			sp.motionZ *= 0.5D;
 			sp.motionY -= 0.02D;
-			if(sp.isCollidedHorizontally && sp.isOffsetPositionInLiquid(sp.motionX, ((sp.motionY + 0.60000002384185791D) - sp.posY) + d1, sp.motionZ))
+			if(sp.collidedHorizontally && sp.isOffsetPositionInLiquid(sp.motionX, ((sp.motionY + 0.60000002384185791D) - sp.posY) + d1, sp.motionZ))
 			{
 				sp.motionY = 0.30000001192092896D;
 			}
@@ -603,7 +603,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 			moveFlying(moveUpward, moveStrafing, moveForward, speedFactor * 0.05F * Config._flyingSpeedFactor.value, Options._flyControlVertical.value);
 
-			sp.moveEntity(sp.motionX, sp.motionY, sp.motionZ);
+			sp.move(MoverType.SELF, sp.motionX, sp.motionY, sp.motionZ);
 
 			sp.motionX *= HorizontalAirDamping;
 			sp.motionY *= HorizontalAirDamping;
@@ -641,7 +641,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		boolean isInWeb = isp.getIsInWebField();
 		if(relocate)
 			isp.setIsInWebField(false);
-		sp.moveEntity(motionX, motionY, motionZ);
+		sp.move(MoverType.SELF, motionX, motionY, motionZ);
 		if(relocate)
 			isp.setIsInWebField(isInWeb);
 	}
@@ -652,7 +652,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		final boolean isUsingItem = sp.getItemInUseCount() > 0;
 		if(sp.onGround && !isJumping)
 		{
-			Block block = getBlock(MathHelper.floor_double(sp.posX), MathHelper.floor_double(getBoundingBox().minY) - 1, MathHelper.floor_double(sp.posZ));
+			Block block = getBlock(MathHelper.floor(sp.posX), MathHelper.floor(getBoundingBox().minY) - 1, MathHelper.floor(sp.posZ));
 			if(block != null)
 				horizontalDamping = block.slipperiness * HorizontalAirDamping;
 			else
@@ -691,7 +691,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 		if(sp.onGround && !isJumping)
 		{
-			Block block = getBlock(MathHelper.floor_double(sp.posX), MathHelper.floor_double(getBoundingBox().minY) - 1, MathHelper.floor_double(sp.posZ));
+			Block block = getBlock(MathHelper.floor(sp.posX), MathHelper.floor(getBoundingBox().minY) - 1, MathHelper.floor(sp.posZ));
 			if(block != null)
 			{
 				float slipperiness = block.slipperiness;
@@ -767,13 +767,13 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		}
 		else if(Config.isFreeClimbAutoLaddderEnabled() && moveForward > 0)
 		{
-			int j = MathHelper.floor_double(getBoundingBox().minY);
+			int j = MathHelper.floor(getBoundingBox().minY);
 			double jGap = getBoundingBox().minY - j;
 
 			if(jGap < 0.1)
 			{
-				int i = MathHelper.floor_double(sp.posX);
-				int k = MathHelper.floor_double(sp.posZ);
+				int i = MathHelper.floor(sp.posX);
+				int k = MathHelper.floor(sp.posZ);
 
 				if(Orientation.isLadder(getState(i, j - 1, k)))
 					sp.motionY = Math.max(sp.motionY, 0.0);
@@ -788,19 +788,19 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 		boolean isOnLadderOrVine = isOnLadder || isOnVine;
 
-		if(Config.isStandardBaseClimb() && sp.isCollidedHorizontally && isOnLadderOrVine)
+		if(Config.isStandardBaseClimb() && sp.collidedHorizontally && isOnLadderOrVine)
 		{
 			sp.motionY = 0.2 * getSpeedFactor();
 		}
 
-		if(Config.isSimpleBaseClimb() && sp.isCollidedHorizontally && isOnLadderOrVine)
+		if(Config.isSimpleBaseClimb() && sp.collidedHorizontally && isOnLadderOrVine)
 		{
-			int i = MathHelper.floor_double(sp.posX);
-			int j = MathHelper.floor_double(getBoundingBox().minY);
-			int k = MathHelper.floor_double(sp.posZ);
+			int i = MathHelper.floor(sp.posX);
+			int j = MathHelper.floor(getBoundingBox().minY);
+			int k = MathHelper.floor(sp.posZ);
 
-			boolean feet = Orientation.isClimbable(sp.worldObj, i, j, k);
-			boolean hands = Orientation.isClimbable(sp.worldObj, i, j + 1, k);
+			boolean feet = Orientation.isClimbable(sp.world, i, j, k);
+			boolean hands = Orientation.isClimbable(sp.world, i, j + 1, k);
 
 			if(feet && hands)
 				sp.motionY = FastUpMotion;
@@ -820,24 +820,24 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			double jd = getBoundingBox().minY;
 			double kd = sp.posZ;
 
-			int i = MathHelper.floor_double(id);
-			int j = MathHelper.floor_double(jd);
-			int k = MathHelper.floor_double(kd);
+			int i = MathHelper.floor(id);
+			int j = MathHelper.floor(jd);
+			int k = MathHelper.floor(kd);
 
-			if(Config.isSmartBaseClimb() && isOnLadderOrVine && sp.isCollidedHorizontally)
+			if(Config.isSmartBaseClimb() && isOnLadderOrVine && sp.collidedHorizontally)
 			{
-				boolean feet = Orientation.isClimbable(sp.worldObj, i, j, k);
-				boolean hands = Orientation.isClimbable(sp.worldObj, i, j + 1, k);
+				boolean feet = Orientation.isClimbable(sp.world, i, j, k);
+				boolean hands = Orientation.isClimbable(sp.world, i, j + 1, k);
 
 				if(feet && hands)
 					sp.motionY = FastUpMotion;
 				else if(feet)
 				{
 					boolean handsSubstitute =
-						Orientation.PZ.isHandsLadderSubstitute(sp.worldObj, i, j + 1, k) ||
-						Orientation.NZ.isHandsLadderSubstitute(sp.worldObj, i, j + 1, k) ||
-						Orientation.ZP.isHandsLadderSubstitute(sp.worldObj, i, j + 1, k) ||
-						Orientation.ZN.isHandsLadderSubstitute(sp.worldObj, i, j + 1, k);
+						Orientation.PZ.isHandsLadderSubstitute(sp.world, i, j + 1, k) ||
+						Orientation.NZ.isHandsLadderSubstitute(sp.world, i, j + 1, k) ||
+						Orientation.ZP.isHandsLadderSubstitute(sp.world, i, j + 1, k) ||
+						Orientation.ZN.isHandsLadderSubstitute(sp.world, i, j + 1, k);
 
 					if(handsSubstitute)
 						sp.motionY = FastUpMotion;
@@ -847,11 +847,11 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 				else if(hands)
 				{
 					boolean feetSubstitute =
-						Orientation.ZZ.isFeetLadderSubstitute(sp.worldObj, i, j, k) ||
-						Orientation.PZ.isFeetLadderSubstitute(sp.worldObj, i, j, k) ||
-						Orientation.NZ.isFeetLadderSubstitute(sp.worldObj, i, j, k) ||
-						Orientation.ZP.isFeetLadderSubstitute(sp.worldObj, i, j, k) ||
-						Orientation.ZN.isFeetLadderSubstitute(sp.worldObj, i, j, k);
+						Orientation.ZZ.isFeetLadderSubstitute(sp.world, i, j, k) ||
+						Orientation.PZ.isFeetLadderSubstitute(sp.world, i, j, k) ||
+						Orientation.NZ.isFeetLadderSubstitute(sp.world, i, j, k) ||
+						Orientation.ZP.isFeetLadderSubstitute(sp.world, i, j, k) ||
+						Orientation.ZN.isFeetLadderSubstitute(sp.world, i, j, k);
 
 					if(feetSubstitute)
 						sp.motionY = FastUpMotion;
@@ -905,10 +905,10 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 					out_handsClimbGap.reset();
 					out_feetClimbGap.reset();
 
-					Orientation.PZ.seekClimbGap(rotation, sp.worldObj, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
-					Orientation.NZ.seekClimbGap(rotation, sp.worldObj, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
-					Orientation.ZP.seekClimbGap(rotation, sp.worldObj, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
-					Orientation.ZN.seekClimbGap(rotation, sp.worldObj, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
+					Orientation.PZ.seekClimbGap(rotation, sp.world, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
+					Orientation.NZ.seekClimbGap(rotation, sp.world, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
+					Orientation.ZP.seekClimbGap(rotation, sp.world, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
+					Orientation.ZN.seekClimbGap(rotation, sp.world, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
 
 					handsClimbing = inout_handsClimbing[0];
 					feetClimbing = inout_feetClimbing[0];
@@ -919,10 +919,10 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 					if(!isSmallClimbing)
 					{
-						Orientation.PP.seekClimbGap(rotation, sp.worldObj, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
-						Orientation.NP.seekClimbGap(rotation, sp.worldObj, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
-						Orientation.NN.seekClimbGap(rotation, sp.worldObj, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
-						Orientation.PN.seekClimbGap(rotation, sp.worldObj, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
+						Orientation.PP.seekClimbGap(rotation, sp.world, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
+						Orientation.NP.seekClimbGap(rotation, sp.world, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
+						Orientation.NN.seekClimbGap(rotation, sp.world, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
+						Orientation.PN.seekClimbGap(rotation, sp.world, i, id, jh, k, kd, isClimbCrawling, isCrawlClimbing, isSmallClimbing, inout_handsClimbing, inout_feetClimbing, out_handsClimbGap, out_feetClimbGap);
 					}
 
 					handsClimbing = inout_handsClimbing[0];
@@ -933,7 +933,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 					if(handsClimbing == HandsClimbing.BottomHold && Orientation.isLadder(getState(i, j + 2, k)))
 					{
-						Orientation ladderOrientation = Orientation.getKnownLadderOrientation(sp.worldObj, i, j + 2, k);
+						Orientation ladderOrientation = Orientation.getKnownLadderOrientation(sp.world, i, j + 2, k);
 						int remote_i = i + ladderOrientation._i;
 						int remote_k = k + ladderOrientation._k;
 						if(!getState(remote_i, j, remote_k).getMaterial().isSolid() && !getState(remote_i, j + 1, remote_k).getMaterial().isSolid())
@@ -942,7 +942,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 					if(!grabButton.Pressed && handsClimbing == HandsClimbing.Up && feetClimbing == FeetClimbing.None)
 					{
-						if(!sp.isCollidedHorizontally && isAirBlock(i, j, k) && isAirBlock(i, j + 1, k))
+						if(!sp.collidedHorizontally && isAirBlock(i, j, k) && isAirBlock(i, j + 1, k))
 							handsClimbing = HandsClimbing.None;
 					}
 
@@ -1103,9 +1103,9 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			double jd = getBoundingBox().maxY + (climbCeilingCrawlingStartConflict ? 1F : 0F);
 			double kd = sp.posZ;
 
-			int i = MathHelper.floor_double(id);
-			int j = MathHelper.floor_double(jd);
-			int k = MathHelper.floor_double(kd);
+			int i = MathHelper.floor(id);
+			int j = MathHelper.floor(jd);
+			int k = MathHelper.floor(kd);
 
 			Block topBlock = supportsCeilingClimbing(i, j, k);
 			Block bottomBlock = supportsCeilingClimbing(i, j + 1, k);
@@ -1163,8 +1163,8 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 			if(!sp.isRiding())
 			{
-				float horizontalMovement = MathHelper.sqrt_double(diffX * diffX + diffZ * diffZ);
-				float movement = MathHelper.sqrt_double(horizontalMovement * horizontalMovement + diffY * diffY);
+				float horizontalMovement = MathHelper.sqrt(diffX * diffX + diffZ * diffZ);
+				float movement = MathHelper.sqrt(horizontalMovement * horizontalMovement + diffY * diffY);
 
 				int relevantMovementFactor = Math.round(movement * 100F);
 
@@ -1525,7 +1525,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 	private float beforeDistanceWalkedModified;
 	private float horizontalCollisionAngle;
 
-	public void beforeMoveEntity(double d, double d1, double d2)
+	public void beforeMoveEntity(MoverType type, double d, double d1, double d2)
 	{
 		beforeMoveEntityPosX = sp.posX;
 		beforeMoveEntityPosY = sp.posZ;
@@ -1548,15 +1548,14 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		}
 	}
 
-	public void moveEntity(double d, double d1, double d2)
+	public void moveEntity(MoverType type, double d, double d1, double d2)
 	{
-		beforeMoveEntity(d, d1, d2);
-		isp.localMoveEntity(d, d1, d2);
-		afterMoveEntity(d, d1, d2);
+		beforeMoveEntity(type, d, d1, d2);
+		isp.localMoveEntity(type, d, d1, d2);
+		afterMoveEntity(type, d, d1, d2);
 	}
 
-	@SuppressWarnings("unused")
-	public void afterMoveEntity(double d, double d1, double d2)
+	public void afterMoveEntity(MoverType type, double d, double d1, double d2)
 	{
 		if(isSliding || isCrawling)
 			sp.distanceWalkedModified = beforeDistanceWalkedModified;
@@ -1570,7 +1569,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		double d12 = sp.posZ - beforeMoveEntityPosY;
 		double d13 = sp.posY - beforeMoveEntityPosZ;
 
-		double distance = MathHelper.sqrt_double(d10 * d10 + d12 * d12 + d13 * d13);
+		double distance = MathHelper.sqrt(d10 * d10 + d12 * d12 + d13 * d13);
 
 		if(isClimbing || isCeilingClimbing)
 		{
@@ -1595,7 +1594,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 				nextClimbDistance++;
 				if(stepBlock != null)
 				{
-					SoundType stepsound = stepBlock.getSoundType(stepBlock.getDefaultState(), sp.worldObj, sp.getPosition(), sp);
+					SoundType stepsound = stepBlock.getSoundType(stepBlock.getDefaultState(), sp.world, sp.getPosition(), sp);
 					if(stepsound != null)
 						playSound(stepsound.getStepSound(), stepsound.getVolume() * 0.15F, stepsound.getPitch());
 				}
@@ -1616,7 +1615,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 	}
 
 	private void playSound(SoundEvent soundEvent, float volume, float pitch) {
-		sp.worldObj.playSound(sp, new BlockPos(sp.posX, sp.posY, sp.posZ), soundEvent, sp.getSoundCategory(), volume, pitch);
+		sp.world.playSound(sp, new BlockPos(sp.posX, sp.posY, sp.posZ), soundEvent, sp.getSoundCategory(), volume, pitch);
 		SmartMovingPacketStream.sendSound(SmartMovingComm.instance, soundEvent.getSoundName().toString(), volume, pitch);
 	}
 
@@ -1670,18 +1669,18 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 	boolean wasOnGround;
 
-	public float getBrightness(float f)
+	public float getBrightness()
 	{
 		sp.posY -= heightOffset;
-		float result = isp.localGetBrightness(f);
+		float result = isp.localGetBrightness();
 		sp.posY += heightOffset;
 		return result;
 	}
 
-	public int getBrightnessForRender(float f)
+	public int getBrightnessForRender()
 	{
 		sp.posY -= heightOffset;
-		int result = isp.localGetBrightnessForRender(f);
+		int result = isp.localGetBrightnessForRender();
 		sp.posY += heightOffset;
 		return result;
 	}
@@ -1704,11 +1703,11 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		prevMotionY = sp.motionY;
 		prevMotionZ = sp.motionZ;
 
-		wasCollidedHorizontally = sp.isCollidedHorizontally;
+		wasCollidedHorizontally = sp.collidedHorizontally;
 
 		isJumping = false;
 
-		if(sp.worldObj.isRemote && updateCounter < 10)
+		if(sp.world.isRemote && updateCounter < 10)
 		{
 			List<?> chatMessageList = (List<?>)Reflect.GetField(GuiNewChat.class, isp.getMcField().ingameGUI.getChatGUI(), SmartMovingInstall.GuiNewChat_chatMessageList);
 			for(int i=0; i<chatMessageList.size(); i++)
@@ -1756,7 +1755,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		if(sp.capabilities.isFlying)
 			sp.fallDistance = 0F;
 
-		if(sp.isCollidedHorizontally)
+		if(sp.collidedHorizontally)
 			collidedHorizontallyTickCount++;
 		else
 			collidedHorizontallyTickCount = 0;
@@ -1856,7 +1855,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		}
 
 		if(esp.movementInput.jump && sp.isInWater() && isDipping)
-			if(sp.posY - MathHelper.floor_double(sp.posY) > (isSlow ? 0.37 : 0.6))
+			if(sp.posY - MathHelper.floor(sp.posY) > (isSlow ? 0.37 : 0.6))
 			{
 				sp.motionY -= 0.039999999105930328D;
 				if(!isStillSwimmingJump && sp.onGround && jumpCharge == 0)
@@ -1947,7 +1946,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		if(tryJump(jumpType, null, null, jumpAngle))
 		{
 			continueWallJumping = !isHeadJumping;
-			sp.isCollidedHorizontally = false;
+			sp.collidedHorizontally = false;
 			sp.rotationYaw = jumpAngle;
 			onStartWallJump(jumpAngle);
 		}
@@ -1996,15 +1995,15 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 			if(!up)
 			{
-				horizontalJumpFactor = MathHelper.sqrt_float(horizontalJumpFactor * horizontalJumpFactor + verticalJumpFactor * verticalJumpFactor);
+				horizontalJumpFactor = MathHelper.sqrt(horizontalJumpFactor * horizontalJumpFactor + verticalJumpFactor * verticalJumpFactor);
 				verticalJumpFactor = 0;
 			}
 
 			Double maxHorizontalMotion = null;
-			double horizontalMotion = MathHelper.sqrt_double(jumpMotionX * jumpMotionX + jumpMotionZ * jumpMotionZ);
+			double horizontalMotion = MathHelper.sqrt(jumpMotionX * jumpMotionX + jumpMotionZ * jumpMotionZ);
 			double verticalMotion = -0.078 + 0.498 * verticalJumpFactor * jumpChargeFactor;
 
-			if(horizontalJumpFactor > 1F && !sp.isCollidedHorizontally)
+			if(horizontalJumpFactor > 1F && !sp.collidedHorizontally)
 				maxHorizontalMotion = (double)Config.getMaxHorizontalMotion(speed, type, inWater) * getSpeedFactor();
 
 			if(head)
@@ -2180,7 +2179,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 		if(sp.fallDistance >= fallDamageStartDistance)
 		{
-			sp.attackEntityFrom(DamageSource.fall, (int)Math.ceil((sp.fallDistance - fallDamageStartDistance) * fallDamageFactor));
+			sp.attackEntityFrom(DamageSource.FALL, (int)Math.ceil((sp.fallDistance - fallDamageStartDistance) * fallDamageFactor));
 			distanceClimbedModified = nextClimbDistance; // to force step sound
 		}
 		sp.fallDistance = 0F;
@@ -2188,7 +2187,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 	public void beforeSetPositionAndRotation()
 	{
-		if(sp.worldObj.isRemote)
+		if(sp.world.isRemote)
 		{
 			initialized = false;
 			multiPlayerInitialized = 5;
@@ -2238,7 +2237,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		}
 
 		boolean initializeCrawling = false;
-		if(!initialized && !(sp.worldObj.isRemote && multiPlayerInitialized != 0) && !sp.isRiding())
+		if(!initialized && !(sp.world.isRemote && multiPlayerInitialized != 0) && !sp.isRiding())
 		{
 			if(getMaxPlayerSolidBetween(getBoundingBox().minY, getBoundingBox().maxY, 0) > getBoundingBox().minY)
 			{
@@ -2356,7 +2355,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			grabButton.Pressed &&
 			esp.movementInput.moveForward > 0F &&
 			isCrawling &&
-			sp.isCollidedHorizontally;
+			sp.collidedHorizontally;
 
 		boolean isFacedToSolidVine = isFacedToSolidVine(isClimbCrawling);
 
@@ -2376,17 +2375,17 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			Config.isFreeClimbingEnabled() &&
 			wouldWantClimb;
 
-		if(!wantClimb || sp.isCollidedVertically)
+		if(!wantClimb || sp.collidedHorizontally)
 			isClimbJumping = false;
 
-		if(sp.isCollided)
+		if(sp.collided)
 			isClimbBackJumping = false;
 
 		wantClimbUp =
 			wantClimb &&
 			esp.movementInput.moveForward > 0F || (isVineAnyClimbing && jumpButton.Pressed && !(sneakButton.Pressed && isFacedToSolidVine))&&
-			(!isCrawling || sp.isCollidedHorizontally) &&
-			(!isSliding || sp.isCollidedHorizontally);
+			(!isCrawling || sp.collidedHorizontally) &&
+			(!isSliding || sp.collidedHorizontally);
 
 		wantClimbDown =
 			wantClimb &&
@@ -2568,7 +2567,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		}
 
 		boolean canAnySprint = preferSprint && !sp.isBurning() && (Config._sprintDuringItemUsage.value || sp.getItemInUseCount() < 1);
-		boolean canVerticallySprint = canAnySprint && !sp.isCollidedVertically;
+		boolean canVerticallySprint = canAnySprint && !sp.collidedHorizontally;
 		boolean canHorizontallySprint = canAnySprint && collidedHorizontallyTickCount < 3;
 		boolean canAllSprint = canHorizontallySprint && canVerticallySprint;
 
@@ -2686,9 +2685,9 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		{
 			setHeightOffset(-1F);
 
-			boolean wasCollidedHorizontally = sp.isCollidedHorizontally; // preserve the horizontal collision state
+			boolean wasCollidedHorizontally = sp.collidedHorizontally; // preserve the horizontal collision state
 			move(0, 0.05, 0, true); // to avoid climb crawling into solid when standing with solid above head (SMP: Illegal Stance)
-			sp.isCollidedHorizontally = wasCollidedHorizontally; // to avoid climb crawling out of water bug
+			sp.collidedHorizontally = wasCollidedHorizontally; // to avoid climb crawling out of water bug
 		}
 		else if(!isClimbCrawling && wasClimbCrawling)
 		{
@@ -2717,7 +2716,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		{
 			setHeightOffset(-1F);
 
-			if(!initializeCrawling || sp.worldObj.isRemote)
+			if(!initializeCrawling || sp.world.isRemote)
 				move(0, (-1D), 0, true);
 
 			if(initializeCrawling)
@@ -2782,7 +2781,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 		wantWallJumping = canWallJumping &&
 			(triggerWallJumping || continueWallJumping ||
-			(wantWallJumping && jumpButton.Pressed && !sp.isCollidedHorizontally));
+			(wantWallJumping && jumpButton.Pressed && !sp.collidedHorizontally));
 
 		boolean canAngleJump = !isSleeping && sp.onGround && !isCrawling && !isClimbing && !isClimbCrawling && !isSwimming && !isDiving;
 		boolean canSideJump = Config.isSideJumpEnabled() && canAngleJump;
@@ -2849,7 +2848,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		if(backJumpCount == -1 && (leftJumpCount > 0 || rightJumpCount > 0))
 			backJumpCount = -2;
 
-		if(sp.onGround || sp.isCollidedVertically)
+		if(sp.onGround || sp.collidedHorizontally)
 			angleJumpType = 0;
 
 		isRopeSliding = isRopeSliding();
@@ -2992,7 +2991,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 	public void addToSendQueue()
 	{
-		if(!sp.worldObj.isRemote)
+		if(!sp.world.isRemote)
 			return;
 
 		boolean isSmall = sp.height < 1;
@@ -3077,7 +3076,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 
 		boolean sendStatePacket = state != prevPacketState;
 
-		int currentWorldPlayerEntitiesSize = sp.worldObj.playerEntities.size();
+		int currentWorldPlayerEntitiesSize = sp.world.playerEntities.size();
 		if(currentWorldPlayerEntitiesSize == 0)
 		{
 			sendStatePacket = false;
@@ -3086,7 +3085,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		}
 		else
 		{
-			int currentWorldPlayerLastEnttyId = ((Entity)sp.worldObj.playerEntities.get(currentWorldPlayerEntitiesSize - 1)).getEntityId();
+			int currentWorldPlayerLastEnttyId = ((Entity)sp.world.playerEntities.get(currentWorldPlayerEntitiesSize - 1)).getEntityId();
 			if(currentWorldPlayerEntitiesSize != lastWorldPlayerEntitiesSize)
 			{
 				if(currentWorldPlayerEntitiesSize > lastWorldPlayerEntitiesSize)

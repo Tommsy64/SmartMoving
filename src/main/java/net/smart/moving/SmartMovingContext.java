@@ -34,7 +34,6 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import net.smart.moving.config.SmartMovingClientConfig;
 import net.smart.moving.config.SmartMovingOptions;
 import net.smart.moving.config.SmartMovingServerConfig;
@@ -77,7 +76,7 @@ public abstract class SmartMovingContext extends SmartRenderContext
 	{
 		Minecraft minecraft = Minecraft.getMinecraft();
 
-		if(minecraft.theWorld != null && minecraft.theWorld.isRemote)
+		if(minecraft.world != null && minecraft.world.isRemote)
 			SmartMovingFactory.handleMultiPlayerTick(minecraft);
 
 		Options.initializeForGameIfNeccessary();
@@ -99,9 +98,8 @@ public abstract class SmartMovingContext extends SmartRenderContext
 			return;
 
 		wasInitialized = true;
-
-		System.out.println(SmartMovingInfo.ModComMessage);
-		FMLLog.getLogger().info(SmartMovingInfo.ModComMessage);
+		
+		SmartMovingMod.log.info(SmartMovingInfo.ModComMessage);
 	}
 
 	public static void initializeServerIfNecessary()

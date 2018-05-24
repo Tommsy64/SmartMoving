@@ -36,7 +36,7 @@ public class SmartMovingComm extends SmartMovingContext implements IPacketReceiv
 	@Override
 	public boolean processStatePacket(FMLProxyPacket packet, IEntityPlayerMP player, int entityId, long state)
 	{
-		Entity entity = Minecraft.getMinecraft().theWorld.getEntityByID(entityId);
+		Entity entity = Minecraft.getMinecraft().world.getEntityByID(entityId);
 		if(entity == null)
 			return true;
 

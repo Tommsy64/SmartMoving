@@ -2,7 +2,7 @@
 Smart Moving Server Mod
 =======================
 
-Version 16.4 for Minecraft Server 1.10.2
+Version 16.4 for Minecraft Server 1.12.2
 
 by Divisor and JonnyNova
 

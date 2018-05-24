@@ -19,6 +19,7 @@ package net.smart.moving;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -42,13 +43,13 @@ public interface IEntityPlayerSP
 
 	void setIsJumpingField(boolean flag);
 
-	void localMoveEntity(double d, double d1, double d2);
+	void localMoveEntity(MoverType type, double d, double d1, double d2);
 
 	EntityPlayer.SleepResult localSleepInBedAt(int i, int j, int k);
 
-	float localGetBrightness(float f);
+	float localGetBrightness();
 
-	int localGetBrightnessForRender(float f);
+	int localGetBrightnessForRender();
 
 	void localUpdateEntityActionState();
 

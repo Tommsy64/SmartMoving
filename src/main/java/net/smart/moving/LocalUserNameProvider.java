@@ -24,12 +24,12 @@ public class LocalUserNameProvider extends SmartMovingContext implements ILocalU
 	@Override
 	public String getLocalConfigUserName()
 	{
-		return Options._localUserHasChangeConfigRight.value ? Minecraft.getMinecraft().thePlayer.getGameProfile().getName() : null;
+		return Options._localUserHasChangeConfigRight.value ? Minecraft.getMinecraft().player.getGameProfile().getName() : null;
 	}
 
 	@Override
 	public String getLocalSpeedUserName()
 	{
-		return Options._localUserHasChangeSpeedRight.value ? Minecraft.getMinecraft().thePlayer.getGameProfile().getName() : null;
+		return Options._localUserHasChangeSpeedRight.value ? Minecraft.getMinecraft().player.getGameProfile().getName() : null;
 	}
 }

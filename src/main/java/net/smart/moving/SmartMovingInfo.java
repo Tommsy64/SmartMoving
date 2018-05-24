@@ -34,7 +34,7 @@ public class SmartMovingInfo
 	public static final String ModId = Mod.modid();
 	public static final String ModName = Mod.name();
 	public static final String ModVersion = Mod.version();
-	public static final String ModComVersion = SmartMovingMod.ModComVersion;
+	public static final String ModComVersion = SmartMovingMod.COMMUNICATION_VERSION;
 
 	public static final String ModComMessage = ModName + " uses communication protocol " + ModComVersion;
 	public static final String ModComId = ModName.replace(" ", "") + " " + ModComVersion;

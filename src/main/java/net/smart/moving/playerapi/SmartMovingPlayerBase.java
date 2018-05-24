@@ -23,6 +23,7 @@ import api.player.client.IClientPlayerAPI;
 import net.minecraft.block.material.*;
 import net.minecraft.client.*;
 import net.minecraft.client.entity.*;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.*;
 import net.minecraft.util.math.BlockPos;
@@ -47,21 +48,21 @@ public class SmartMovingPlayerBase extends ClientPlayerBase implements IEntityPl
 	}
 
 	@Override
-	public void beforeMoveEntity(double d, double d1, double d2)
+	public void beforeMoveEntity(MoverType type, double d, double d1, double d2)
 	{
-		moving.beforeMoveEntity(d, d1, d2);
+		moving.beforeMoveEntity(type, d, d1, d2);
 	}
 
 	@Override
-	public void afterMoveEntity(double d, double d1, double d2)
+	public void afterMoveEntity(MoverType type, double d, double d1, double d2)
 	{
-		moving.afterMoveEntity(d, d1, d2);
+		moving.afterMoveEntity(type, d, d1, d2);
 	}
 
 	@Override
-	public void localMoveEntity(double d, double d1, double d2)
+	public void localMoveEntity(MoverType type, double d, double d1, double d2)
 	{
-		super.moveEntity(d, d1, d2);
+		super.moveEntity(type, d, d1, d2);
 	}
 
 	@Override
@@ -77,27 +78,27 @@ public class SmartMovingPlayerBase extends ClientPlayerBase implements IEntityPl
 	}
 
 	@Override
-	public float getBrightness(float f)
+	public float getBrightness()
 	{
-		return moving.getBrightness(f);
+		return moving.getBrightness();
 	}
 
 	@Override
-	public float localGetBrightness(float f)
+	public float localGetBrightness()
 	{
-		return super.getBrightness(f);
+		return super.getBrightness();
 	}
 
 	@Override
-	public int getBrightnessForRender(float f)
+	public int getBrightnessForRender()
 	{
-		return moving.getBrightnessForRender(f);
+		return moving.getBrightnessForRender();
 	}
 
 	@Override
-	public int localGetBrightnessForRender(float f)
+	public int localGetBrightnessForRender()
 	{
-		return super.getBrightnessForRender(f);
+		return super.getBrightnessForRender();
 	}
 
 	@Override
@@ -161,9 +162,9 @@ public class SmartMovingPlayerBase extends ClientPlayerBase implements IEntityPl
 	}
 
 	@Override
-	public void moveEntityWithHeading(float f, float f1)
+	public void moveEntityWithHeading(float strafe, float vertical, float forward)
 	{
-		moving.moveEntityWithHeading(f, f1);
+		moving.moveEntityWithHeading(strafe, vertical, forward);
 	}
 
 	@Override

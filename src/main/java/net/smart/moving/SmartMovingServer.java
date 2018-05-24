@@ -20,6 +20,7 @@ package net.smart.moving;
 
 import api.player.server.IServerPlayerAPI;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -184,7 +185,7 @@ public class SmartMovingServer
 	}
 
 	public IEntityPlayerMP[] getAllPlayers() {
-		List<?> playerEntityList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList();
+		List<EntityPlayerMP> playerEntityList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
 		IEntityPlayerMP[] result = new IEntityPlayerMP[playerEntityList.size()];
 		for(int i=0; i<playerEntityList.size(); i++)
 			result[i] = (IEntityPlayerMP)((IServerPlayerAPI)playerEntityList.get(i)).getServerPlayerBase(SmartMovingInfo.ModName);
