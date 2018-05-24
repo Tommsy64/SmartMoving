@@ -147,6 +147,6 @@ public class SmartMovingRenderPlayerBase extends RenderPlayerBase implements IRe
 
 	private SmartMovingRender render;
 
-	private final static Field _modelArmorChestplate = Reflect.GetField(LayerArmorBase.class, SmartRenderInstall.LayerArmorBase_modelArmorChestplate);
+	private final static Field _modelArmorChestplate = Reflect.GetField(LayerArmorBase.class, SmartRenderInstall.LayerArmorBase_modelArmorLeggings);
 	private final static Field _modelArmor = Reflect.GetField(LayerArmorBase.class, SmartRenderInstall.LayerArmorBase_modelArmor);
 }

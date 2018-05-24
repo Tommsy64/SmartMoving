@@ -27,24 +27,15 @@ archivesBaseName = "SmartMoving"
 ext.simpleVersion = version
 version = "${config.minecraft.version}-${project.version}"
 
-if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
-}
-
 configurations {
-    provided
     embedded
     compile.extendsFrom provided, embedded
 }
 
 dependencies {
-    provided files("libs/PlayerAPI-1.10.2-1.1.jar")
-    provided files("libs/RenderPlayerAPI-1.10.2-1.1.jar")
     compile project(":SmartRender")
+    compile project(":PlayerAPI")
+    compile project(":RenderPlayerAPI")
 }
 
 idea.module.scopes.PROVIDED.plus += [configurations.provided]

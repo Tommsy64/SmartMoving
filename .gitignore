@@ -22,3 +22,6 @@ classes/
 
 # OS X
 .DS_Store
+
+# Forge
+*.launch

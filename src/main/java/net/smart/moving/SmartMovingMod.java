@@ -35,7 +35,7 @@ import net.smart.moving.config.*;
 import net.smart.moving.render.*;
 import net.smart.utilities.*;
 
-@Mod(modid = SmartMovingMod.ID, name = SmartMovingMod.NAME, version = SmartMovingMod.VERSION, useMetadata = true)
+@Mod(modid = SmartMovingMod.ID, name = SmartMovingMod.NAME, version = SmartMovingMod.VERSION, useMetadata = true/*@MCVERSIONDEP@*/)
 public class SmartMovingMod
 {
 	final static String ID = "smartmoving";

@@ -636,21 +636,21 @@ public abstract class SmartMovingBase extends SmartMovingContext
 				}
 			}
 		}
-		List list1 = worldObj.getCollisionBoxes(_this, boundingBox.addCoord(x, y, z));
+		List<AxisAlignedBB> list1 = worldObj.getCollisionBoxes(_this, boundingBox.addCoord(x, y, z));
 		AxisAlignedBB axisalignedbb = boundingBox;
 		AxisAlignedBB axisalignedbb1;
-		for (Iterator iterator = list1.iterator(); iterator.hasNext(); y = axisalignedbb1.calculateYOffset(boundingBox, y)) {
-			axisalignedbb1 = (AxisAlignedBB)iterator.next();
+		for (Iterator<AxisAlignedBB> iterator = list1.iterator(); iterator.hasNext(); y = axisalignedbb1.calculateYOffset(boundingBox, y)) {
+			axisalignedbb1 = iterator.next();
 		}
 		boundingBox = boundingBox.offset(0.0D, y, 0.0D);
 		boolean flag1 = onGround || ((d7 != y) && (d7 < 0.0D));
 		AxisAlignedBB axisalignedbb2;
-		for (Iterator iterator8 = list1.iterator(); iterator8.hasNext(); x = axisalignedbb2.calculateXOffset(boundingBox, x)) {
-			axisalignedbb2 = (AxisAlignedBB)iterator8.next();
+		for (Iterator<AxisAlignedBB> iterator8 = list1.iterator(); iterator8.hasNext(); x = axisalignedbb2.calculateXOffset(boundingBox, x)) {
+			axisalignedbb2 = iterator8.next();
 		}
 		boundingBox = boundingBox.offset(x, 0.0D, 0.0D);
-		for (Iterator iterator8 = list1.iterator(); iterator8.hasNext(); z = axisalignedbb2.calculateZOffset(boundingBox, z)) {
-			axisalignedbb2 = (AxisAlignedBB)iterator8.next();
+		for (Iterator<AxisAlignedBB> iterator8 = list1.iterator(); iterator8.hasNext(); z = axisalignedbb2.calculateZOffset(boundingBox, z)) {
+			axisalignedbb2 = iterator8.next();
 		}
 		boundingBox = boundingBox.offset(0.0D, 0.0D, z);
 		if ((stepHeight > 0.0F) && (flag1) && ((d6 != x) || (d8 != z)))
@@ -660,44 +660,44 @@ public abstract class SmartMovingBase extends SmartMovingContext
 			double d11 = z;
 			boundingBox = axisalignedbb;
 			y = stepHeight;
-			List list = worldObj.getCollisionBoxes(_this, boundingBox.addCoord(d6, y, d8));
+			List<AxisAlignedBB> list = worldObj.getCollisionBoxes(_this, boundingBox.addCoord(d6, y, d8));
 			AxisAlignedBB axisalignedbb4 = boundingBox;
 			AxisAlignedBB axisalignedbb5 = axisalignedbb4.addCoord(d6, 0.0D, d8);
 			double d12 = y;
 			AxisAlignedBB axisalignedbb6;
-			for (Iterator iterator1 = list.iterator(); iterator1.hasNext(); d12 = axisalignedbb6.calculateYOffset(axisalignedbb5, d12)) {
-				axisalignedbb6 = (AxisAlignedBB)iterator1.next();
+			for (Iterator<AxisAlignedBB> iterator1 = list.iterator(); iterator1.hasNext(); d12 = axisalignedbb6.calculateYOffset(axisalignedbb5, d12)) {
+				axisalignedbb6 = iterator1.next();
 			}
 			axisalignedbb4 = axisalignedbb4.offset(0.0D, d12, 0.0D);
 			double d18 = d6;
 			AxisAlignedBB axisalignedbb7;
-			for (Iterator iterator2 = list.iterator(); iterator2.hasNext(); d18 = axisalignedbb7.calculateXOffset(axisalignedbb4, d18)) {
-				axisalignedbb7 = (AxisAlignedBB)iterator2.next();
+			for (Iterator<AxisAlignedBB> iterator2 = list.iterator(); iterator2.hasNext(); d18 = axisalignedbb7.calculateXOffset(axisalignedbb4, d18)) {
+				axisalignedbb7 = iterator2.next();
 			}
 			axisalignedbb4 = axisalignedbb4.offset(d18, 0.0D, 0.0D);
 			double d19 = d8;
 			AxisAlignedBB axisalignedbb8;
-			for (Iterator iterator3 = list.iterator(); iterator3.hasNext(); d19 = axisalignedbb8.calculateZOffset(axisalignedbb4, d19)) {
-				axisalignedbb8 = (AxisAlignedBB)iterator3.next();
+			for (Iterator<AxisAlignedBB> iterator3 = list.iterator(); iterator3.hasNext(); d19 = axisalignedbb8.calculateZOffset(axisalignedbb4, d19)) {
+				axisalignedbb8 = iterator3.next();
 			}
 			axisalignedbb4 = axisalignedbb4.offset(0.0D, 0.0D, d19);
 			AxisAlignedBB axisalignedbb13 = boundingBox;
 			double d20 = y;
 			AxisAlignedBB axisalignedbb9;
-			for (Iterator iterator4 = list.iterator(); iterator4.hasNext(); d20 = axisalignedbb9.calculateYOffset(axisalignedbb13, d20)) {
-				axisalignedbb9 = (AxisAlignedBB)iterator4.next();
+			for (Iterator<AxisAlignedBB> iterator4 = list.iterator(); iterator4.hasNext(); d20 = axisalignedbb9.calculateYOffset(axisalignedbb13, d20)) {
+				axisalignedbb9 = iterator4.next();
 			}
 			axisalignedbb13 = axisalignedbb13.offset(0.0D, d20, 0.0D);
 			double d21 = d6;
 			AxisAlignedBB axisalignedbb10;
-			for (Iterator iterator5 = list.iterator(); iterator5.hasNext(); d21 = axisalignedbb10.calculateXOffset(axisalignedbb13, d21)) {
-				axisalignedbb10 = (AxisAlignedBB)iterator5.next();
+			for (Iterator<AxisAlignedBB> iterator5 = list.iterator(); iterator5.hasNext(); d21 = axisalignedbb10.calculateXOffset(axisalignedbb13, d21)) {
+				axisalignedbb10 = iterator5.next();
 			}
 			axisalignedbb13 = axisalignedbb13.offset(d21, 0.0D, 0.0D);
 			double d22 = d8;
 			AxisAlignedBB axisalignedbb11;
-			for (Iterator iterator6 = list.iterator(); iterator6.hasNext(); d22 = axisalignedbb11.calculateZOffset(axisalignedbb13, d22)) {
-				axisalignedbb11 = (AxisAlignedBB)iterator6.next();
+			for (Iterator<AxisAlignedBB> iterator6 = list.iterator(); iterator6.hasNext(); d22 = axisalignedbb11.calculateZOffset(axisalignedbb13, d22)) {
+				axisalignedbb11 = iterator6.next();
 			}
 			axisalignedbb13 = axisalignedbb13.offset(0.0D, 0.0D, d22);
 			double d23 = d18 * d18 + d19 * d19;
@@ -716,8 +716,8 @@ public abstract class SmartMovingBase extends SmartMovingContext
 			}
 			y = -stepHeight;
 			AxisAlignedBB axisalignedbb12;
-			for (Iterator iterator7 = list.iterator(); iterator7.hasNext(); y = axisalignedbb12.calculateYOffset(boundingBox, y)) {
-				axisalignedbb12 = (AxisAlignedBB)iterator7.next();
+			for (Iterator<AxisAlignedBB> iterator7 = list.iterator(); iterator7.hasNext(); y = axisalignedbb12.calculateYOffset(boundingBox, y)) {
+				axisalignedbb12 = iterator7.next();
 			}
 			if (d14 * d14 + d11 * d11 >= x * x + z * z)
 			{
