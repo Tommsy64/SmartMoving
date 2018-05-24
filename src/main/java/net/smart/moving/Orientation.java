@@ -42,7 +42,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.smart.moving.config.SmartMovingOptions;
-import net.smart.utilities.BlockWallUtil;
 import net.smart.utilities.Name;
 import net.smart.utilities.Reflect;
 
@@ -1747,7 +1746,7 @@ public class Orientation extends SmartMovingContext
 			if(block instanceof BlockFence)
 				return ((BlockFence)block).canConnectTo(world, new BlockPos(i + direction._i, local_offset + j_offset, k + direction._k));
 			if(block instanceof BlockWall)
-				return BlockWallUtil.canConnectTo(block, world, new BlockPos(i + direction._i, local_offset + j_offset, k + direction._k));
+				return ((BlockWall) block).canConnectTo(world, new BlockPos(i + direction._i, local_offset + j_offset, k + direction._k));
 			else if(SmartMovingOptions.hasBetterMisc && _canConnectFenceTo != null)
 				return (Boolean)Reflect.Invoke(_canConnectFenceTo, block, world, i + direction._i, local_offset + j_offset, k + direction._k);
 		}

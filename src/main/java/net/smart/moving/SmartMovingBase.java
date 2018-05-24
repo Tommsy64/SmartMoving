@@ -20,6 +20,7 @@ package net.smart.moving;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockTrapDoor;
+import net.minecraft.block.BlockWall;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -32,7 +33,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.smart.moving.config.SmartMovingOptions;
-import net.smart.utilities.BlockWallUtil;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -390,11 +390,9 @@ public abstract class SmartMovingBase extends SmartMovingContext
 				int i = MathHelper.floor_double(sp.posX);
 				int j = MathHelper.floor_double(getBoundingBox().maxY);
 				int k = MathHelper.floor_double(sp.posZ);
-				if(getBlock(i, j, k) == Block.getBlockFromName("cobblestone_wall"))
-					return BlockWallUtil.canConnectTo(
-							Block.getBlockFromName("cobblestone_wall"),
-							sp.worldObj,
-							new BlockPos(i - orientation._i, j, k - orientation._k));
+				Block block = getBlock(i, j, k);
+				if(block == Block.getBlockFromName("cobblestone_wall"))
+					return ((BlockWall) block).canConnectTo(sp.worldObj, new BlockPos(i - orientation._i, j, k - orientation._k));
 			}
 		}
 		return false;
