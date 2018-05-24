@@ -152,9 +152,10 @@ public abstract class SmartMovingContext extends SmartRenderContext
 		return state.getValue(property);
 	}
 
-	public static EnumFacing getValue(IBlockState state, PropertyDirection property)
+	public static EnumFacing getValue(IBlockState state, PropertyDirection property, EnumFacing defaultValue)
 	{
-		return state.getValue(property);
+		Comparable<?> comparable = state.getProperties().get(property);
+		return comparable == null ? null : property.getValueClass().cast(comparable);
 	}
 
 	public static Enum getValue(IBlockState state, PropertyEnum property)

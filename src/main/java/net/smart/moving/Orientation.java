@@ -115,7 +115,6 @@ public class Orientation extends SmartMovingContext
 			Diagonals.add(this);
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	public Orientation rotate(int angle)
 	{
 		if (this == ZZ)
@@ -1158,11 +1157,14 @@ public class Orientation extends SmartMovingContext
 		return -1;
 	}
 
+	/**
+	 * @return Returns null if FACING property is not found in the BlockState.
+	 */
 	public static Orientation getKnownLadderOrientation(World world, int i, int j, int k)
 	{
 		IBlockState state = getState(world, i, j, k);
-		EnumFacing facing = getValue(state, BlockLadder.FACING);
-		return FacingToOrientation.get(facing);
+		EnumFacing facing = getValue(state, BlockLadder.FACING, null);
+		return facing == null ? null : FacingToOrientation.get(facing);
 	}
 
 	public boolean hasVineOrientation(World world, int i, int j, int k)
@@ -1182,7 +1184,7 @@ public class Orientation extends SmartMovingContext
 	private boolean hasLadderOrientation(int i, int j_offset, int k)
 	{
 		IBlockState state = getBlockState(i, j_offset, k);
-		EnumFacing value = getValue(state, BlockLadder.FACING);
+		EnumFacing value = getValue(state, BlockLadder.FACING, this._facing);
 		return value == this._facing;
 	}
 
@@ -1332,7 +1334,7 @@ public class Orientation extends SmartMovingContext
 
 	private boolean isTrapDoorFront(IBlockState state)
 	{
-		return _facings.contains( getValue(state, BlockTrapDoor.FACING));
+		return _facings.contains(getValue(state, BlockTrapDoor.FACING));
 	}
 
 	private boolean isBottomStairCompactNotBack(IBlockState state)
@@ -1357,7 +1359,7 @@ public class Orientation extends SmartMovingContext
 
 	private boolean isStairCompactFront(IBlockState state)
 	{
-		EnumFacing facing = getValue(state, BlockStairs.FACING);
+		EnumFacing facing = getValue(state, BlockStairs.FACING, this._facing);
 		BlockStairs.EnumShape shape = (BlockStairs.EnumShape)getValue(state, BlockStairs.SHAPE);
 
 		if(this == NZ)
@@ -1381,7 +1383,7 @@ public class Orientation extends SmartMovingContext
 
 	private boolean isStairCompactBack(IBlockState state)
 	{
-		EnumFacing facing = getValue(state, BlockStairs.FACING);
+		EnumFacing facing = getValue(state, BlockStairs.FACING, this._facing);
 		BlockStairs.EnumShape shape = (BlockStairs.EnumShape)getValue(state, BlockStairs.SHAPE);
 
 		if(this == NZ)
@@ -1549,7 +1551,7 @@ public class Orientation extends SmartMovingContext
 
 	private boolean isFenceGateFront(IBlockState state)
 	{
-		EnumFacing facing = getValue(state, BlockDirectional.FACING);
+		EnumFacing facing = getValue(state, BlockDirectional.FACING, this._facing);
 		Orientation orientation = FacingToOrientation.get(facing);
 		return this == orientation.rotate(90) || this == orientation.rotate(-90);
 	}
@@ -2055,9 +2057,9 @@ public class Orientation extends SmartMovingContext
 		return true;
 	}
 
-	private static EnumFacing getDoorFacing(IBlockState state)
+	private EnumFacing getDoorFacing(IBlockState state)
 	{
-		EnumFacing facing = getValue(state, BlockDoor.FACING);
+		EnumFacing facing = getValue(state, BlockDoor.FACING, this._facing);
 		if (!getValue(state, BlockDoor.OPEN))
 			return facing;
 
