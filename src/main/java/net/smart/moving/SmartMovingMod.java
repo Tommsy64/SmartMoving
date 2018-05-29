@@ -28,11 +28,14 @@ import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Mod.*;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.*;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.*;
 import net.minecraftforge.fml.common.network.*;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.network.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.text.TextComponentString;
 import net.smart.moving.config.*;
 import net.smart.moving.render.*;
 import net.smart.utilities.*;
@@ -113,6 +116,15 @@ public class SmartMovingMod
 	public void tickStart(ClientTickEvent event)
 	{
 		SmartMovingContext.onTickInGame();
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void test(PlayerTickEvent event) {
+		if (event.phase != TickEvent.Phase.END)
+			return;
+		AxisAlignedBB bb = event.player.getEntityBoundingBox();
+		double height = bb.maxY - bb.minY;
+		event.player.sendMessage(new TextComponentString(height + ""));
 	}
 
 	@SubscribeEvent

@@ -45,7 +45,6 @@ import static net.smart.render.SmartRenderUtilities.RadiantToAngle;
 import static net.smart.render.SmartRenderUtilities.getAngle;
 import static net.smart.render.SmartRenderUtilities.getHorizontalCollisionangle;
 
-@SuppressWarnings("static-access")
 public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 {
 	private boolean initialized;
@@ -1473,7 +1472,6 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		actualFeetClimbType = feetClimbType;
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	private void setOnlyShouldClimbSpeed(double value)
 	{
 		isClimbing = true;
@@ -1716,9 +1714,12 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			updateCounter++;
 		}
 	}
+	
+	private float spActualHeight;
 
 	public void afterOnUpdate()
 	{
+		sp.height = spActualHeight;
 		correctOnUpdate(isSwimming || isDiving || isDipping || isCrawling, isSwimming);
 
 		spawnParticles(isp.getMcField(), sp.motionX, sp.motionZ);
@@ -2293,7 +2294,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		{
 			crawlStandUpBottom = getMaxPlayerSolidBetween(getBoundingBox().minY - (initializeCrawling ? 0D : 1D), getBoundingBox().minY, Config._crawlOverEdge.value ? 0 : -0.05);
 			double crawlStandUpCeiling = getMinPlayerSolidBetween(getBoundingBox().maxY, getBoundingBox().maxY + 1.1D, 0);
-			mustCrawl = crawlStandUpCeiling - crawlStandUpBottom < sp.height - heightOffset;
+			mustCrawl = crawlStandUpCeiling - crawlStandUpBottom < spActualHeight - heightOffset;
 		}
 
 		if(esp.capabilities.isFlying && (Config.isFlyingEnabled() || Config.isLevitateSmallEnabled()))
@@ -2307,7 +2308,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 			else if(isCrawling)
 			{
 				double crawlStandUpLiquidCeiling = getMinPlayerLiquidBetween(getBoundingBox().maxY, getBoundingBox().maxY + 1.1D);
-				if(crawlStandUpLiquidCeiling - crawlStandUpBottom >= sp.height + 1F)
+				if(crawlStandUpLiquidCeiling - crawlStandUpBottom >= spActualHeight + 1F)
 					contextContinueCrawl = false;
 			}
 		}
@@ -2931,6 +2932,11 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		wasRunning = isRunning;
 		wasLevitating = isLevitating;
 	}
+	
+	public void afterUpdateEntityActionState() {
+		spActualHeight = sp.height;
+		sp.height = 1.8f;
+	}
 
 	private boolean toCrawling()
 	{
@@ -2994,7 +3000,7 @@ public class SmartMovingSelf extends SmartMoving implements ISmartMovingSelf
 		if(!sp.world.isRemote)
 			return;
 
-		boolean isSmall = sp.height < 1;
+		boolean isSmall = spActualHeight < 1;
 
 		long state = 0;
 		state |= isp.localIsSneaking() ? 1 : 0;

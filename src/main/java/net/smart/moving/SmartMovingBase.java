@@ -760,7 +760,7 @@ public abstract class SmartMovingBase extends SmartMovingContext
 		return sp.isSneaking();
 	}
 
-	public void correctOnUpdate(boolean isSmall, boolean reverseMaterialAcceleration)
+	void correctOnUpdate(boolean isSmall, boolean reverseMaterialAcceleration)
 	{
 		double d = sp.posX - sp.prevPosX;
 		double d1 = sp.posZ - sp.prevPosZ;

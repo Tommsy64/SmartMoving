@@ -244,7 +244,6 @@ public class SmartMovingServer
 		this.isSmall = isSmall;
 	}
 
-	@SuppressWarnings("unused")
 	public void afterSetPosition(double d, double d1, double d2)
 	{
 		if(!crawlingInitialized)

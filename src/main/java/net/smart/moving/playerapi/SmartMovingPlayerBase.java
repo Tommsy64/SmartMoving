@@ -190,6 +190,11 @@ public class SmartMovingPlayerBase extends ClientPlayerBase implements IEntityPl
 	{
 		moving.updateEntityActionState(false);
 	}
+	
+	@Override
+	public void afterUpdateEntityActionState() {
+		moving.afterUpdateEntityActionState();
+	}
 
 	@Override
 	public void localUpdateEntityActionState()
