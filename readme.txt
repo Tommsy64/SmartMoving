@@ -1,3 +1,8 @@
+=== Discontinued ===
+This port of Smart Moving (original creators: Divisor and JonnyNova) by has been discontinued.
+Further development will take place on a rewritten version of Smart Moving [here](https://github.com/Tommsy64/SmartMovingReloaded). 
+
+
 ================
 Smart Moving Mod
 ================
