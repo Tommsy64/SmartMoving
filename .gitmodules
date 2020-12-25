@@ -1,9 +1,9 @@
 [submodule "SmartRender"]
 	path = SmartRender
-	url = https://github.com/Tommsy64/SmartRender.git
+	url = https://github.com/doch2/SmartRender.git
 [submodule "PlayerAPI"]
 	path = PlayerAPI
-	url = https://github.com/Tommsy64/PlayerAPI.git
+	url = https://github.com/doch2/PlayerAPI.git
 [submodule "RenderPlayerAPI"]
 	path = RenderPlayerAPI
-	url = https://github.com/Tommsy64/RenderPlayerAPI.git
+	url = https://github.com/doch2/RenderPlayerAPI.git
